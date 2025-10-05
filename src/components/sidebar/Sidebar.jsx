@@ -41,7 +41,7 @@ const Sidebar = () => {
         window.location.href = "/Minecraft Changes PR.html";
         break;
       case "Create a Study Plan":
-        window.location.href = "/index.html";
+        window.location.href = "index.html"
         break;
       case "Audio Summary":
         window.location.href = "/miti.html";

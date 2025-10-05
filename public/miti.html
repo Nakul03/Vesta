@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteroid Mitigation Strategies - Professional Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #2563eb;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .intro-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: #f8fafc;
+            padding: 20px 30px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+            border-color: #2563eb;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-button {
+            padding: 12px 28px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #475569;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .tab-button.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .strategies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .strategy-card {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+            border-color: #2563eb;
+        }
+
+        .strategy-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2563eb;
+            background: #eff6ff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .strategy-card:hover .strategy-number {
+            background: #2563eb;
+            color: white;
+        }
+
+        .strategy-title {
+            font-size: 1.75rem;
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .strategy-description {
+            color: #64748b;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .strategy-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .metric {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #2563eb;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .comparison-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+            border-bottom: 3px solid #2563eb;
+        }
+
+        th {
+            padding: 20px;
+            text-align: left;
+            color: #1e293b;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        .rating {
+            display: inline-flex;
+            gap: 5px;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 1.2rem;
+        }
+
+        .star.empty {
+            color: #e2e8f0;
+        }
+
+        .info-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .info-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box.success { border-color: #10b981; }
+        .info-box.warning { border-color: #f59e0b; }
+        .info-box.danger { border-color: #ef4444; }
+        .info-box.info { border-color: #2563eb; }
+
+        .info-box-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .info-box p {
+            color: #64748b;
+            line-height: 1.7;
+        }
+
+        .interactive-selector {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .selector-title {
+            font-size: 2rem;
+            color: #1e293b;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .selector-subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .scenario-group {
+            margin-bottom: 30px;
+        }
+
+        .scenario-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .scenario-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            padding: 12px 24px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            background: #eff6ff;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .option-btn.selected {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .calculate-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calculate-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .recommendation-result {
+            background: #f0fdf4;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #10b981;
+            display: none;
+            animation: slideDown 0.5s ease;
+            margin-top: 30px;
+        }
+
+        .recommendation-result.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .recommendation-title {
+            font-size: 1.6rem;
+            color: #10b981;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .recommendation-content {
+            color: #064e3b;
+            line-height: 1.8;
+        }
+
+        .recommendation-content h4 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #065f46;
+        }
+
+        .recommendation-content ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .recommendation-content li {
+            margin-bottom: 8px;
+        }
+
+        .accordion {
+            margin-bottom: 40px;
+        }
+
+        .accordion-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            border-color: #cbd5e1;
+        }
+
+        .accordion-header {
+            padding: 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: #f8fafc;
+        }
+
+        .accordion-icon {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+            color: #64748b;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+            color: #2563eb;
+        }
+
+        .accordion-item.active .accordion-header {
+            color: #2563eb;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 25px;
+            color: #64748b;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 1000px;
+            padding: 0 25px 25px 25px;
+        }
+
+        .timeline-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .timeline-title {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.03);
+            border-color: #2563eb;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: #2563eb;
+            border: 4px solid white;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 0 0 4px #e2e8f0;
+        }
+
+        .timeline-date {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .timeline-text {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #2563eb;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .footer-text {
+            color: #64748b;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: #2563eb;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+
+        .footer-link:hover {
+            background: #eff6ff;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .strategies-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 20px; }
+            .timeline-item { flex-direction: column !important; }
+            .timeline-content { width: 100%; margin-left: 50px; }
+            .timeline-marker { left: 20px; }
+            .intro-stats { flex-direction: column; gap: 20px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 12px; }
+            .nav-tabs { flex-direction: column; }
+            .tab-button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Asteroid Mitigation Strategies</h1>
+            <p class="subtitle">Protecting Our Planet: Understanding How We Defend Earth from Space Threats</p>
+            <div class="intro-stats">
+                <div class="stat-box">
+                    <div class="stat-number">25,000+</div>
+                    <div class="stat-label">Near-Earth Objects Tracked</div>
+                </div>
+                <div class="stat-box" onclick="window.location.href='mitigation.html'">
+                    <div class="stat-number">Start</div>
+                    <div class="stat-label">Game</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">10+ Years</div>
+                    <div class="stat-label">Advance Warning Needed</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showTab('overview')">Overview</button>
+            <button class="tab-button" onclick="showTab('strategies')">Defense Methods</button>
+            <button class="tab-button" onclick="showTab('comparison')">Comparison</button>
+            <button class="tab-button" onclick="showTab('timeline')">Timeline</button>
+            <button class="tab-button" onclick="showTab('selector')">Strategy Finder</button>
+            <button class="tab-button" onclick="showTab('faq')">FAQ</button>
+        </div>
+
+        <div id="overview" class="content-section active">
+            <div class="info-boxes">
+                <div class="info-box info">
+                    <div class="info-box-title">What is Asteroid Mitigation?</div>
+                    <p>Asteroid mitigation refers to techniques designed to prevent potentially hazardous asteroids from impacting Earth. These methods work by altering an asteroid's trajectory well before it reaches our planet, ensuring public safety through proactive planetary defense.</p>
+                </div>
+                <div class="info-box success">
+                    <div class="info-box-title">Why It Matters</div>
+                    <p>Even small asteroids can cause significant damage. The 2013 Chelyabinsk meteor, just 20 meters in diameter, injured 1,500 people and damaged thousands of buildings. Larger impacts could threaten cities or cause global catastrophes, making defense systems essential.</p>
+                </div>
+                <div class="info-box warning">
+                    <div class="info-box-title">Time is Critical</div>
+                    <p>Early detection is paramount for successful deflection. With adequate warning (typically 10+ years), even modest trajectory adjustments can prevent impacts. This makes continuous sky surveys and tracking systems vital infrastructure for planetary security.</p>
+                </div>
+                <div class="info-box danger">
+                    <div class="info-box-title">Current Threat Level</div>
+                    <p>No known asteroids currently pose an immediate threat to Earth. NASA tracks over 25,000 near-Earth objects, with approximately 95% of potentially hazardous large asteroids already catalogued. Continuous monitoring ensures new discoveries are rapidly assessed.</p>
+                </div>
+            </div>
+
+            <div style="background: white; padding: 40px; border-radius: 15px; margin-top: 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+                <h2 style="color: #1e293b; margin-bottom: 20px; font-size: 1.8rem;">The Importance of Planetary Defense</h2>
+                <p style="color: #64748b; line-height: 1.8; font-size: 1.1rem; margin-bottom: 15px;">
+                    While space agencies lead asteroid defense initiatives, public understanding and support are crucial for maintaining robust detection and deflection capabilities. Informed communities can better prepare for potential threats and advocate for continued investment in planetary protection programs.
+                </p>
+                <p style="color: #64748b; line-height: 1.8; font-size: 1.1rem;">
+                    This comprehensive guide explains each defense strategy, comparing their effectiveness, technological readiness, and optimal applications. Whether you're an educator, policymaker, student, or concerned citizen, understanding these systems empowers informed discussion about humanity's collective safety measures.
+                </p>
+            </div>
+        </div>
+
+        <div id="strategies" class="content-section">
+            <div class="strategies-grid">
+                <div class="strategy-card">
+                    <div class="strategy-number">Strategy 01</div>
+                    <h3 class="strategy-title">Kinetic Impactor</h3>
+                    <p class="strategy-description">High-velocity spacecraft deliberately collides with target asteroid, transferring momentum to alter trajectory. NASA's DART mission successfully demonstrated this technology in September 2022, marking a milestone in practical planetary defense.</p>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Effectiveness</div>
+                            <div class="metric-value">High</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 85%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Technology Status</div>
+                            <div class="metric-value">Proven</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 95%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Lead Time</div>
+                            <div class="metric-value">5-10 Years</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cost Efficiency</div>
+                            <div class="metric-value">Moderate</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <div class="strategy-number">Strategy 02</div>
+                    <h3 class="strategy-title">Nuclear Deflection</h3>
+                    <p class="strategy-description">Nuclear device detonated near asteroid surface vaporizes material, creating thrust from ejecta plume. Most powerful option available for large asteroids or scenarios with limited warning time.</p>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Effectiveness</div>
+                            <div class="metric-value">Very High</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 95%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Technology Status</div>
+                            <div class="metric-value">Tested</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Lead Time</div>
+                            <div class="metric-value">1-5 Years</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 50%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cost Efficiency</div>
+                            <div class="metric-value">High</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 85%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <div class="strategy-number">Strategy 03</div>
+                    <h3 class="strategy-title">Laser Ablation</h3>
+                    <p class="strategy-description">Concentrated laser energy vaporizes asteroid surface material, generating thrust from expelled particles. Enables precise, continuous deflection over extended periods with minimal fragmentation risk.</p>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Effectiveness</div>
+                            <div class="metric-value">Moderate</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 65%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Technology Status</div>
+                            <div class="metric-value">Developing</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Lead Time</div>
+                            <div class="metric-value">10-20 Years</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 85%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cost Efficiency</div>
+                            <div class="metric-value">Moderate</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <div class="strategy-number">Strategy 04</div>
+                    <h3 class="strategy-title">Gravity Tractor</h3>
+                    <p class="strategy-description">Spacecraft maintains position near asteroid, using gravitational attraction to gradually modify trajectory. Non-contact method ideal for delicate deflections requiring high precision over extended timeframes.</p>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Effectiveness</div>
+                            <div class="metric-value">Low-Moderate</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 55%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Technology Status</div>
+                            <div class="metric-value">High</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 80%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Lead Time</div>
+                            <div class="metric-value">15-25 Years</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cost Efficiency</div>
+                            <div class="metric-value">Moderate</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 65%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <div class="strategy-number">Strategy 05</div>
+                    <h3 class="strategy-title">Ion Beam Deflection</h3>
+                    <p class="strategy-description">Spacecraft employs focused ion beam to ablate asteroid surface, creating continuous low-thrust propulsion. Provides precise trajectory control with minimal structural disruption to target object.</p>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Effectiveness</div>
+                            <div class="metric-value">Moderate</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Technology Status</div>
+                            <div class="metric-value">Developing</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 65%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Lead Time</div>
+                            <div class="metric-value">10-15 Years</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 80%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cost Efficiency</div>
+                            <div class="metric-value">Moderate</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <div class="strategy-number">Strategy 06</div>
+                    <h3 class="strategy-title">Mass Driver</h3>
+                    <p class="strategy-description">Autonomous landing system mines asteroid material and electromagnetically launches it into space. Reaction force from ejected mass gradually modifies trajectory while potentially harvesting resources.</p>
+                    <div class="strategy-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Effectiveness</div>
+                            <div class="metric-value">Moderate-High</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Technology Status</div>
+                            <div class="metric-value">Conceptual</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 45%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Lead Time</div>
+                            <div class="metric-value">15-30 Years</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 95%"></div></div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cost Efficiency</div>
+                            <div class="metric-value">High</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 80%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="comparison" class="content-section">
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Strategy</th>
+                            <th>Best Application</th>
+                            <th>Effectiveness</th>
+                            <th>Lead Time</th>
+                            <th>Technology Status</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Kinetic Impactor</strong></td>
+                            <td>Medium asteroids, moderate warning</td>
+                            <td>High</td>
+                            <td>5-10 years</td>
+                            <td>Proven (DART 2022)</td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nuclear Deflection</strong></td>
+                            <td>Large asteroids, short warning</td>
+                            <td>Very High</td>
+                            <td>1-5 years</td>
+                            <td>Tested technology</td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star empty">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Laser Ablation</strong></td>
+                            <td>Small asteroids, long warning</td>
+                            <td>Moderate</td>
+                            <td>10-20 years</td>
+                            <td>Under development</td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star empty">★</span>
+                                    <span class="star empty">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gravity Tractor</strong></td>
+                            <td>Precise deflections, extended time</td>
+                            <td>Low-Moderate</td>
+                            <td>15-25 years</td>
+                            <td>Technology proven</td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star empty">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ion Beam</strong></td>
+                            <td>Medium asteroids, adequate warning</td>
+                            <td>Moderate</td>
+                            <td>10-15 years</td>
+                            <td>Under development</td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star empty">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mass Driver</strong></td>
+                            <td>Large asteroids, very long warning</td>
+                            <td>Moderate-High</td>
+                            <td>15-30 years</td>
+                            <td>Conceptual stage</td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star empty">★</span>
+                                    <span class="star empty">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="timeline" class="content-section">
+            <div class="timeline-container">
+                <h2 class="timeline-title">Mission Implementation Timeline</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Year 0-1</div>
+                            <h4 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Detection & Assessment</h4>
+                            <div class="timeline-text">Ground-based telescopes and space observatories detect potentially hazardous asteroid. Initial orbit calculations and comprehensive threat assessment conducted by international teams.</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Year 1-2</div>
+                            <h4 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Detailed Characterization</h4>
+                            <div class="timeline-text">Reconnaissance missions launched to determine asteroid composition, dimensions, rotation rate, and structural integrity. Critical data acquisition for optimal strategy selection.</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Year 2-3</div>
+                            <h4 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Strategy Selection</h4>
+                            <div class="timeline-text">International collaboration determines optimal mitigation approach based on asteroid characteristics, available technology, timeline constraints, and political considerations.</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Year 3-5</div>
+                            <h4 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Mission Design & Construction</h4>
+                            <div class="timeline-text">Detailed engineering specifications developed, spacecraft construction initiated, and comprehensive system testing. Multiple redundancies incorporated for mission-critical components.</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Year 5-8</div>
+                            <h4 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Launch & Transit</h4>
+                            <div class="timeline-text">Deflection mission launched on optimal trajectory. Transit duration varies based on asteroid orbit and mission parameters. Continuous monitoring and trajectory corrections as needed.</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Year 8-10</div>
+                            <h4 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Deflection Operation</h4>
+                            <div class="timeline-text">Primary deflection maneuver executed according to mission plan. Post-operation monitoring conducted to verify trajectory modification and assess overall mission success.</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Year 10+</div>
+                            <h4 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">Verification & Monitoring</h4>
+                            <div class="timeline-text">Extended tracking period confirms trajectory change achieves safety requirements. Contingency missions prepared if supplementary deflection operations become necessary.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="selector" class="content-section">
+            <div class="interactive-selector">
+                <h2 class="selector-title">Strategy Selection Tool</h2>
+                <p class="selector-subtitle">Answer these questions to determine the optimal defense approach for different scenarios</p>
+
+                <div class="scenario-group">
+                    <label class="scenario-label">Asteroid Size</label>
+                    <div class="scenario-options">
+                        <button class="option-btn" data-group="size" data-value="small" onclick="selectOption(this)">Small (10-50m)</button>
+                        <button class="option-btn" data-group="size" data-value="medium" onclick="selectOption(this)">Medium (50-300m)</button>
+                        <button class="option-btn" data-group="size" data-value="large" onclick="selectOption(this)">Large (300m+)</button>
+                    </div>
+                </div>
+
+                <div class="scenario-group">
+                    <label class="scenario-label">Available Warning Time</label>
+                    <div class="scenario-options">
+                        <button class="option-btn" data-group="time" data-value="short" onclick="selectOption(this)">Short (1-5 years)</button>
+                        <button class="option-btn" data-group="time" data-value="moderate" onclick="selectOption(this)">Moderate (5-15 years)</button>
+                        <button class="option-btn" data-group="time" data-value="long" onclick="selectOption(this)">Extended (15+ years)</button>
+                    </div>
+                </div>
+
+                <div class="scenario-group">
+                    <label class="scenario-label">Asteroid Composition</label>
+                    <div class="scenario-options">
+                        <button class="option-btn" data-group="composition" data-value="rocky" onclick="selectOption(this)">Rocky/Metallic</button>
+                        <button class="option-btn" data-group="composition" data-value="icy" onclick="selectOption(this)">Icy/Carbonaceous</button>
+                        <button class="option-btn" data-group="composition" data-value="unknown" onclick="selectOption(this)">Unknown</button>
+                    </div>
+                </div>
+
+                <div class="scenario-group">
+                    <label class="scenario-label">Primary Concern</label>
+                    <div class="scenario-options">
+                        <button class="option-btn" data-group="concern" data-value="fragmentation" onclick="selectOption(this)">Avoid Fragmentation</button>
+                        <button class="option-btn" data-group="concern" data-value="precision" onclick="selectOption(this)">Maximum Precision</button>
+                        <button class="option-btn" data-group="concern" data-value="power" onclick="selectOption(this)">Maximum Deflection</button>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calculateRecommendation()">Calculate Optimal Strategy</button>
+
+                <div id="recommendationResult" class="recommendation-result">
+                    <div class="recommendation-title">Recommended Strategy</div>
+                    <div id="recommendationContent" class="recommendation-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="faq" class="content-section">
+            <div style="background: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+                <h2 style="color: #1e293b; margin-bottom: 20px; font-size: 1.8rem;">Frequently Asked Questions</h2>
+                <p style="color: #64748b; line-height: 1.7; font-size: 1.05rem;">
+                    Comprehensive answers to common questions about asteroid detection, deflection strategies, and planetary defense initiatives.
+                </p>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>How do we detect potentially hazardous asteroids?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Asteroid detection relies on a global network of ground-based telescopes and space-based observatories that continuously scan the sky. When an object is identified, astronomers calculate its orbital trajectory using multiple observations. Objects with orbits that bring them within 0.05 AU (7.5 million km) of Earth are classified as potentially hazardous and receive enhanced monitoring to refine orbital predictions.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>Why not simply destroy asteroids with nuclear weapons?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Fragmenting an asteroid into multiple pieces often creates a more dangerous scenario than the original threat. Instead of one impact, Earth could face dozens of smaller impacts distributed across a wider area. Deflection strategies aim to gently alter the asteroid's trajectory, ensuring it misses Earth entirely. Nuclear deflection, when employed, uses standoff detonation to vaporize surface material and create thrust rather than fragmenting the object.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>Has asteroid deflection been successfully demonstrated?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Yes. NASA's Double Asteroid Redirection Test (DART) mission successfully demonstrated kinetic impactor technology in September 2022. The spacecraft collided with Dimorphos, a small moon orbiting the asteroid Didymos, changing its orbital period by 33 minutes. This exceeded mission objectives and proved that humanity possesses functional planetary defense capability.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>What happens if initial deflection attempts fail?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Planetary defense strategies incorporate multiple redundancies and backup plans. If initial deflection proves insufficient, subsequent missions can provide additional trajectory modifications. This multi-phase approach is why early detection is critical—it provides time for iterative corrections. In worst-case scenarios where deflection becomes infeasible, resources shift to impact mitigation through evacuation and emergency preparedness.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>Who has authority over planetary defense decisions?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Planetary defense operates through international cooperation coordinated by the United Nations Committee on the Peaceful Uses of Outer Space. Space agencies like NASA, ESA, JAXA, and others share detection data and assessment capabilities. Since asteroid impacts represent global threats regardless of impact location, response strategies require multinational consensus and resource sharing.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>What are the typical costs of deflection missions?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Mission costs vary significantly based on strategy complexity, asteroid characteristics, and timeline constraints. Kinetic impactor missions typically range from $300 million to $2 billion. More complex approaches like nuclear deflection or sustained gravity tractor operations may cost $2-5 billion. When compared to potential impact damage—potentially trillions of dollars and catastrophic loss of life—these represent highly cost-effective insurance for planetary survival.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>Could asteroids be mined while being deflected?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Asteroid mining during deflection operations represents an intriguing possibility for future missions. Some deflection methods, particularly mass driver systems, could simultaneously extract valuable resources while modifying trajectories. However, current technology prioritizes safety and proven deflection capabilities. Resource extraction capabilities may be integrated into future planetary defense systems as technologies mature.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>What is the actual risk level from asteroid impacts?</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Statistically, the annual probability of a catastrophic asteroid impact is extremely low. However, the potential consequences necessitate preparedness despite low probability. Current detection systems have catalogued approximately 95% of near-Earth asteroids larger than 1 km. No known asteroids currently pose imminent threats. Continued investment in detection infrastructure and deflection capability ensures humanity remains protected as new objects are discovered.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <h3 class="footer-title">Global Planetary Defense</h3>
+                <p class="footer-text">Asteroid mitigation represents a collective effort benefiting all humanity. Through international cooperation, technological advancement, and sustained vigilance, we maintain the capability to protect Earth from cosmic threats.</p>
+                <div class="footer-links">
+                    <a href="https://www.nasa.gov/planetarydefense" target="_blank" class="footer-link">NASA Planetary Defense</a>
+                    <a href="https://www.esa.int/Safety_Security/Planetary_Defence" target="_blank" class="footer-link">ESA Space Safety</a>
+                    <a href="https://cneos.jpl.nasa.gov/" target="_blank" class="footer-link">Near-Earth Object Database</a>
+                    <a href="https://www.planetary.org/planetary-defense" target="_blank" class="footer-link">Planetary Society</a>
+                </div>
+                <p style="color: #94a3b8; margin-top: 20px; font-size: 0.9rem;">© 2025 Asteroid Mitigation Strategies | Educational Resource</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleAccordion(element) {
+            const wasActive = element.classList.contains('active');
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            if (!wasActive) {
+                element.classList.add('active');
+            }
+        }
+
+        let selectedOptions = {
+            size: null,
+            time: null,
+            composition: null,
+            concern: null
+        };
+
+        function selectOption(button) {
+            const group = button.dataset.group;
+            const value = button.dataset.value;
+            
+            document.querySelectorAll(`[data-group="${group}"]`).forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            button.classList.add('selected');
+            selectedOptions[group] = value;
+        }
+
+        function calculateRecommendation() {
+            if (!selectedOptions.size || !selectedOptions.time || !selectedOptions.composition || !selectedOptions.concern) {
+                alert('Please select an option for each category to receive a recommendation.');
+                return;
+            }
+
+            let recommendation = '';
+
+            if (selectedOptions.time === 'short') {
+                recommendation = `
+                    <h4>Primary Strategy: Nuclear Deflection</h4>
+                    <p><strong>Rationale:</strong> Limited warning time necessitates the most powerful deflection capability available. Nuclear deflection provides rapid, high-energy trajectory modification suitable for ${selectedOptions.size} asteroids within compressed timeframes.</p>
+                    <h4>Implementation Approach:</h4>
+                    <ul>
+                        <li>Immediate reconnaissance mission for target characterization</li>
+                        <li>Standoff nuclear detonation to vaporize surface material</li>
+                        <li>Trajectory modification achievable within 1-3 years</li>
+                        <li>Backup kinetic impactor mission as secondary option</li>
+                    </ul>
+                    <h4>Success Probability: 85-95%</h4>
+                    <h4>Estimated Cost: $2-4 billion</h4>
+                `;
+            } else if (selectedOptions.time === 'moderate' && selectedOptions.size !== 'large') {
+                recommendation = `
+                    <h4>Primary Strategy: Kinetic Impactor</h4>
+                    <p><strong>Rationale:</strong> Moderate warning time combined with ${selectedOptions.size} asteroid dimensions makes kinetic impactor technology optimal. Proven capability (DART mission) offers excellent effectiveness-to-cost ratio.</p>
+                    <h4>Implementation Approach:</h4>
+                    <ul>
+                        <li>High-velocity spacecraft launched on intercept trajectory</li>
+                        <li>Impact at 5-10 km/s transfers sufficient momentum</li>
+                        <li>Trajectory modification within 5-8 years</li>
+                        <li>Minimal fragmentation risk with proper targeting</li>
+                    </ul>
+                    <h4>Success Probability: 80-90%</h4>
+                    <h4>Estimated Cost: $500 million - $1.5 billion</h4>
+                `;
+            } else if (selectedOptions.time === 'long' && selectedOptions.concern === 'precision') {
+                recommendation = `
+                    <h4>Primary Strategy: Gravity Tractor</h4>
+                    <p><strong>Rationale:</strong> Extended warning time enables gentle, continuous deflection. Gravity tractor provides maximum precision without fragmentation risk, ideal when accuracy is paramount.</p>
+                    <h4>Implementation Approach:</h4>
+                    <ul>
+                        <li>Spacecraft maintains hovering position near asteroid</li>
+                        <li>Gravitational attraction provides gradual trajectory change</li>
+                        <li>Continuous operation over 10-20 years</li>
+                        <li>Perfect for avoiding gravitational keyholes and fine trajectory control</li>
+                    </ul>
+                    <h4>Success Probability: 75-85%</h4>
+                    <h4>Estimated Cost: $1-3 billion</h4>
+                `;
+            } else if (selectedOptions.time === 'long') {
+                recommendation = `
+                    <h4>Primary Strategy: Ion Beam Deflection</h4>
+                    <p><strong>Rationale:</strong> Extended timeline allows efficient ion beam system deployment. Provides excellent control and continuous thrust for ${selectedOptions.size} asteroids with minimal fragmentation risk.</p>
+                    <h4>Implementation Approach:</h4>
+                    <ul>
+                        <li>Deploy spacecraft equipped with ion beam system</li>
+                        <li>Continuous low-thrust ablation of asteroid surface</li>
+                        <li>Gradual deflection over 10-15 years</li>
+                        <li>Highly controllable and predictable outcomes</li>
+                    </ul>
+                    <h4>Success Probability: 75-85%</h4>
+                    <h4>Estimated Cost: $800 million - $2 billion</h4>
+                `;
+            } else {
+                recommendation = `
+                    <h4>Primary Strategy: Combined Kinetic + Nuclear Approach</h4>
+                    <p><strong>Rationale:</strong> ${selectedOptions.size} asteroid with ${selectedOptions.time} warning time benefits from two-phase approach maximizing success probability through redundancy.</p>
+                    <h4>Implementation Approach:</h4>
+                    <ul>
+                        <li>Phase 1: Kinetic impactor for initial deflection</li>
+                        <li>Phase 2: Nuclear standby capability if additional deflection required</li>
+                        <li>Comprehensive monitoring between operational phases</li>
+                        <li>Maximum flexibility to adapt based on Phase 1 results</li>
+                    </ul>
+                    <h4>Success Probability: 90-95%</h4>
+                    <h4>Estimated Cost: $2-5 billion</h4>
+                `;
+            }
+
+            document.getElementById('recommendationContent').innerHTML = recommendation;
+            document.getElementById('recommendationResult').classList.add('show');
+            document.getElementById('recommendationResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.strategy-card, .info-box').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html

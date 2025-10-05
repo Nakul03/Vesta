@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asteroid Launcher</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:white;overflow-x:hidden;}
+#hero{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#000 0%,#1a1a2e 100%);position:relative;overflow:hidden;}
+#stars{position:absolute;width:100%;height:100%;pointer-events:none;}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle 3s infinite;}
+@keyframes twinkle{0%,100%{opacity:0.3;}50%{opacity:1;}}
+h1{font-size:4rem;margin-bottom:1rem;z-index:10;text-align:center;}
+.subtitle{font-size:1.5rem;color:#888;margin-bottom:3rem;z-index:10;}
+.start-btn{background:#ff4444;color:white;border:none;padding:1.5rem 3rem;font-size:1.5rem;border-radius:50px;cursor:pointer;transition:all 0.3s;z-index:10;font-weight:bold;}
+.start-btn:hover{background:#ff6666;transform:scale(1.05);}
+#main-content{display:none;}
+#asteroid-selector{background:#1a1a1a;padding:4rem 2rem;text-align:center;}
+.asteroid-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;max-width:1200px;margin:2rem auto;padding:0 2rem;}
+.asteroid-card{background:#2a2a2a;border:2px solid #333;border-radius:15px;padding:1.5rem;cursor:pointer;transition:all 0.3s;}
+.asteroid-card:hover{border-color:#ff4444;transform:translateY(-5px);}
+.asteroid-card.selected{border-color:#ff4444;background:#3a2a2a;}
+.asteroid-name{font-size:1.3rem;font-weight:bold;margin-bottom:0.5rem;}
+.asteroid-size{color:#888;font-size:0.9rem;}
+.asteroid-diameter{color:#ff4444;font-size:1.5rem;font-weight:bold;margin:0.5rem 0;}
+#launch-section{background:#0f0f0f;padding:3rem 2rem;min-height:100vh;}
+.launch-controls{max-width:800px;margin:0 auto;text-align:center;}
+.control-group{margin:2rem 0;background:#1a1a1a;padding:2rem;border-radius:15px;}
+.control-group h3{margin-bottom:1rem;font-size:1.3rem;}
+.slider-container{margin:1rem 0;}
+input[type="range"]{width:100%;height:8px;background:#333;outline:none;border-radius:5px;-webkit-appearance:none;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:25px;height:25px;background:#ff4444;border-radius:50%;cursor:pointer;}
+input[type="range"]::-moz-range-thumb{width:25px;height:25px;background:#ff4444;border-radius:50%;cursor:pointer;}
+.value-display{font-size:2rem;color:#ff4444;font-weight:bold;margin:1rem 0;}
+.launch-btn{background:#ff4444;color:white;border:none;padding:1.5rem 4rem;font-size:1.8rem;border-radius:50px;cursor:pointer;transition:all 0.3s;font-weight:bold;margin:2rem 0;}
+.launch-btn:hover:not(:disabled){background:#ff6666;transform:scale(1.05);}
+.launch-btn:disabled{background:#555;cursor:not-allowed;}
+#impact-section{display:none;background:#0a0a0a;padding:3rem 2rem;min-height:100vh;}
+#map{height:500px;max-width:1200px;margin:2rem auto;border-radius:15px;border:3px solid #333;}
+.impact-stats{max-width:1200px;margin:2rem auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;}
+.stat-card{background:#1a1a1a;padding:2rem;border-radius:15px;border:2px solid #333;}
+.stat-label{color:#888;font-size:0.9rem;text-transform:uppercase;margin-bottom:0.5rem;}
+.stat-value{font-size:2.5rem;font-weight:bold;color:#ff4444;}
+.stat-unit{font-size:1rem;color:#fff;margin-left:0.5rem;}
+.damage-zones{max-width:1200px;margin:2rem auto;background:#1a1a1a;padding:2rem;border-radius:15px;}
+.zone{padding:1rem;margin:1rem 0;border-radius:10px;display:flex;justify-content:space-between;align-items:center;}
+.zone-fireball{background: rgba(255,100,0,0.2);}
+.zone-radiation{background: rgba(255,150,0,0.2);}
+.zone-shockwave{background: rgba(255,200,0,0.2);}
+.zone-wind{background: rgba(255,255,0,0.2);}
+.reset-btn{background:#333;color:white;border:none;padding:1rem 2rem;font-size:1.2rem;border-radius:50px;cursor:pointer;margin:2rem auto;display:block;}
+.reset-btn:hover{background:#444;}
+.comparison{max-width:1200px;margin:2rem auto;background:#1a1a1a;padding:2rem;border-radius:15px;text-align:center;}
+#storyBox{max-width:1200px;margin:2rem auto;background:#1a1a1a;padding:2rem;border-radius:15px;display:none;}
+#storyText{font-size:1.2rem;line-height:1.6;}
+.story-nav{margin-top:1rem;text-align:center;}
+.story-nav button{background:#ff4444;color:white;border:none;padding:0.8rem 1.5rem;margin:0 0.5rem;border-radius:50px;cursor:pointer;font-weight:bold;}
+.story-nav button:hover{background:#ff6666;}
+@media(max-width:768px){h1{font-size:2.5rem;}.subtitle{font-size:1rem;}.asteroid-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="hero">
+    <div id="stars"></div>
+    <h1>Asteroid Launcher</h1>
+    <p class="subtitle">Choose your asteroid and launch it at Earth</p>
+    <button class="start-btn" onclick="startExperience()">Launch an Asteroid</button>
+</div>
+
+<div id="main-content">
+    <div id="asteroid-selector">
+        <h2 style="font-size:2.5rem; margin-bottom:1rem;">Choose Your Asteroid</h2>
+        <p style="color:#888; margin-bottom:2rem;">Select the size of asteroid you want to launch</p>
+        <div class="asteroid-grid" id="asteroidGrid"></div>
+    </div>
+
+    <div id="launch-section">
+        <div class="launch-controls">
+            <h2 style="font-size:2.5rem; margin-bottom:2rem;">Launch Settings</h2>
+            <div class="control-group">
+                <h3>Launch Angle</h3>
+                <div class="slider-container">
+                    <input type="range" id="angleSlider" min="0" max="90" value="45">
+                    <div class="value-display"><span id="angleValue">45</span>&deg;</div>
+                </div>
+            </div>
+            <div class="control-group">
+                <h3>Impact Velocity</h3>
+                <div class="slider-container">
+                    <input type="range" id="velocitySlider" min="11" max="72" value="20">
+                    <div class="value-display"><span id="velocityValue">20</span> km/s</div>
+                </div>
+            </div>
+            <div class="control-group">
+                <h3>Click on map to set impact location</h3>
+                <div id="launchMap" style="height:400px; border-radius:15px; margin-top:1rem;"></div>
+            </div>
+            <button class="launch-btn" onclick="launchAsteroid()">LAUNCH</button>
+        </div>
+    </div>
+
+    <div id="impact-section">
+        <h2 style="font-size:2.5rem; text-align:center; margin-bottom:2rem;">Impact Results</h2>
+        <div id="map"></div>
+        <div class="impact-stats" id="impactStats"></div>
+        <div class="damage-zones">
+            <h3 style="margin-bottom:1rem; font-size:1.8rem;">Damage Zones</h3>
+            <div id="damageZones"></div>
+        </div>
+        <div class="comparison" id="comparison"></div>
+        <div id="storyBox">
+            <div id="storyText"></div>
+            <div class="story-nav">
+                <button id="prevStory">Previous</button>
+                <button id="nextStory">Next</button>
+            </div>
+        </div>
+        <button class="reset-btn" onclick="reset()">Launch Another Asteroid</button>
+    </div>
+</div>
+
+<script>
+function generateStars(){
+    var starsContainer=document.getElementById('stars');
+    for(var i=0;i<100;i++){
+        var star=document.createElement('div'); star.className='star';
+        var size=Math.random()*3+'px';
+        star.style.width=size; star.style.height=size;
+        star.style.left=Math.random()*100+'%'; star.style.top=Math.random()*100+'%';
+        star.style.animationDelay=Math.random()*3+'s';
+        starsContainer.appendChild(star);
+    }
+}
+
+var asteroids=[];
+var selectedAsteroid=null;
+var launchAngle=45;
+var velocity=20000;
+var impactLocation={lat:40.7128,lng:-74.0060};
+var launchMap, impactMap;
+var storySteps=[], storyIndex=0;
+var craterData=null, quakeData=null, tsunamiData=null;
+
+async function loadAsteroids(){
+    try{
+        let res=await fetch(`https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=NHPtmmQW98f68U57yRk7WljMlugkWbdF9DplbbCa`);
+        let data=await res.json();
+        asteroids=data.near_earth_objects.map(a=>({name:a.name,diameter:((a.estimated_diameter.meters.estimated_diameter_max+a.estimated_diameter.meters.estimated_diameter_min)/2),size:a.estimated_diameter.meters.estimated_diameter_max}));
+        selectedAsteroid=asteroids[0];
+        initializeAsteroidGrid();
+    }catch(e){console.error(e);}
+}
+
+function startExperience(){
+    document.getElementById('hero').style.display='none';
+    document.getElementById('main-content').style.display='block';
+    loadAsteroids();
+    setTimeout(initializeLaunchMap,100);
+}
+
+function initializeAsteroidGrid(){
+    var grid=document.getElementById('asteroidGrid');
+    grid.innerHTML='';
+    asteroids.forEach(function(a){
+        var card=document.createElement('div'); card.className='asteroid-card';
+        if(a.name===selectedAsteroid.name) card.classList.add('selected');
+        card.innerHTML='<div class="asteroid-name">'+a.name+'</div>'+
+                       '<div class="asteroid-diameter">'+a.diameter.toFixed(1)+' m</div>';
+        card.onclick=function(){ selectAsteroid(a,card); };
+        grid.appendChild(card);
+    });
+}
+
+function selectAsteroid(a,card){
+    selectedAsteroid=a;
+    document.querySelectorAll('.asteroid-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+}
+
+function initializeLaunchMap(){
+    launchMap=L.map('launchMap').setView([impactLocation.lat,impactLocation.lng],3);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(launchMap);
+    var marker=L.marker([impactLocation.lat,impactLocation.lng]).addTo(launchMap);
+    launchMap.on('click',function(e){
+        impactLocation={lat:e.latlng.lat,lng:e.latlng.lng};
+        marker.setLatLng([e.latlng.lat,e.latlng.lng]);
+    });
+}
+
+document.getElementById('angleSlider').addEventListener('input',function(e){
+    launchAngle=e.target.value;
+    document.getElementById('angleValue').textContent=launchAngle;
+});
+document.getElementById('velocitySlider').addEventListener('input',function(e){
+    velocity=e.target.value*1000;
+    document.getElementById('velocityValue').textContent=e.target.value;
+});
+
+function calculateImpact(){
+    var radius=selectedAsteroid.diameter/2;
+    var volume=(4/3)*Math.PI*Math.pow(radius,3);
+    var density=3000;
+    var mass=volume*density;
+    var kineticEnergy=0.5*mass*Math.pow(velocity,2);
+    return {mass:mass,energy:kineticEnergy,diameter:selectedAsteroid.diameter};
+}
+
+function launchAsteroid(){
+    if(!selectedAsteroid) return alert('Select an asteroid first');
+    document.getElementById('launch-section').style.display='none';
+    document.getElementById('impact-section').style.display='block';
+    showImpact();
+}
+
+function showImpact(){
+    if(impactMap) impactMap.remove();
+    impactMap=L.map('map').setView([impactLocation.lat,impactLocation.lng],4);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(impactMap);
+    
+    var impact=L.circle([impactLocation.lat,impactLocation.lng],{color:'red',fillColor:'rgba(255,0,0,0.3)',fillOpacity:0.5,radius:100000}).addTo(impactMap);
+    var damageZones=document.getElementById('damageZones');
+    damageZones.innerHTML='';
+    var impactStats=document.getElementById('impactStats');
+    impactStats.innerHTML='';
+    
+    var stats=calculateImpact();
+    
+    var zones=[
+        {label:'Fireball',radius:stats.diameter*1000*2,color:'rgba(255,100,0,0.3)'},
+        {label:'Thermal Radiation',radius:stats.diameter*1000*4,color:'rgba(255,150,0,0.3)'},
+        {label:'Shockwave',radius:stats.diameter*1000*6,color:'rgba(255,200,0,0.3)'},
+        {label:'Wind',radius:stats.diameter*1000*8,color:'rgba(255,255,0,0.3)'}
+    ];
+    
+    zones.forEach(function(z){
+        L.circle([impactLocation.lat,impactLocation.lng],{color:z.color,fillColor:z.color,fillOpacity:0.2,radius:z.radius}).addTo(impactMap);
+        var div=document.createElement('div'); div.className='zone zone-'+z.label.toLowerCase().replace(' ',''); div.innerHTML='<strong>'+z.label+'</strong> : '+(z.radius/1000).toFixed(1)+' km';
+        damageZones.appendChild(div);
+    });
+    
+    var statsArr=[
+        {label:'Asteroid Diameter',value:stats.diameter.toFixed(1)+' m'},
+        {label:'Impact Energy',value:(stats.energy/1e15).toFixed(2)+' PJ'},
+        {label:'Asteroid Mass',value:(stats.mass/1e9).toFixed(2)+' Gg'}
+    ];
+    statsArr.forEach(function(s){
+        var card=document.createElement('div'); card.className='stat-card';
+        card.innerHTML='<div class="stat-label">'+s.label+'</div><div class="stat-value">'+s.value+'</div>';
+        impactStats.appendChild(card);
+    });
+    
+    initializeStory(stats);
+}
+
+function initializeStory(stats){
+    storySteps=[
+        `Do you know the asteroid that wiped out the dinosaurs was only about 10 km in diameter? The asteroid you selected is ${stats.diameter.toFixed(1)} meters across. Its impact could destroy the entire world.`,
+        `The asteroid will strike at latitude ${impactLocation.lat.toFixed(2)} and longitude ${impactLocation.lng.toFixed(2)}. A massive fireball will form immediately, incinerating everything nearby.`,
+        `Thermal radiation and shockwaves will extend far beyond the impact. Winds will uproot forests and flatten cities. Dust and debris will block sunlight globally.`,
+        `Crater diameter: approx ${(stats.diameter*0.5).toFixed(1)} km. Earthquakes and tsunamis may occur. Air quality will drop severely. Humans may face extinction without precautions.`,
+        `Preventive measures include early detection, asteroid deflection technologies, and underground shelters. Evacuation plans could save some lives. But global destruction is likely.`
+    ];
+    storyIndex=0;
+    document.getElementById('storyBox').style.display='block';
+    updateStory();
+}
+
+function updateStory(){
+    document.getElementById('storyText').innerHTML=storySteps[storyIndex];
+}
+document.getElementById('nextStory').addEventListener('click',function(){
+    if(storyIndex<storySteps.length-1){storyIndex++;updateStory();}
+});
+document.getElementById('prevStory').addEventListener('click',function(){
+    if(storyIndex>0){storyIndex--;updateStory();}
+});
+
+function reset(){
+    document.getElementById('impact-section').style.display='none';
+    document.getElementById('launch-section').style.display='block';
+    document.getElementById('storyBox').style.display='none';
+}
+
+generateStars();
+</script>
+</body>
+</html>

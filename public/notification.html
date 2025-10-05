@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Asteroid Tracking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .notification-circle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .live-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+            }
+        }
+
+        .icon {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            width: 400px;
+            max-height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .notification-panel.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .update-time {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .panel-content {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stat-description {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .info-banner {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #1e40af;
+            line-height: 1.6;
+        }
+
+        .asteroid-list {
+            margin-top: 20px;
+        }
+
+        .list-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .asteroid-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .asteroid-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .asteroid-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .asteroid-details {
+            font-size: 0.9rem;
+            color: #64748b;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .hazard-badge {
+            display: inline-block;
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .safe-badge {
+            display: inline-block;
+            background: #d1fae5;
+            color: #059669;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .refresh-info {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .notification-panel {
+                width: calc(100vw - 40px);
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-circle" onclick="togglePanel()">
+        <div class="live-dot"></div>
+        <div class="icon">🌍</div>
+        <div class="notification-badge" id="asteroidCount">0</div>
+    </div>
+
+    <div class="notification-panel" id="notificationPanel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">NASA Asteroid Tracking</div>
+                <div class="update-time" id="updateTime">Updated just now</div>
+            </div>
+            <button class="close-btn" onclick="togglePanel()">×</button>
+        </div>
+        <div class="panel-content" id="panelContent">
+            <div class="loading">
+                <div class="spinner"></div>
+                <div>Loading asteroid data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'MwfPBwoFvtIiQXrn41tXzIW5AtxBxGl5PXH6lVCZ';
+        let isOpen = false;
+
+        function togglePanel() {
+            isOpen = !isOpen;
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('active', isOpen);
+        }
+
+        function updateTimestamp() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('updateTime').textContent = `Updated at ${timeStr}`;
+        }
+
+        async function fetchAsteroidData() {
+            const today = new Date().toISOString().split('T')[0];
+            const apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${today}&end_date=${today}&api_key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                const asteroids = data.near_earth_objects[today] || [];
+                const totalCount = asteroids.length;
+                const hazardousCount = asteroids.filter(a => a.is_potentially_hazardous_asteroid).length;
+                
+                let closestDistance = Infinity;
+                let largestSize = 0;
+                let closestAsteroid = null;
+                
+                asteroids.forEach(asteroid => {
+                    const distance = parseFloat(asteroid.close_approach_data[0].miss_distance.kilometers);
+                    const size = asteroid.estimated_diameter.meters.estimated_diameter_max;
+                    
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestAsteroid = asteroid;
+                    }
+                    
+                    if (size > largestSize) {
+                        largestSize = size;
+                    }
+                });
+
+                document.getElementById('asteroidCount').textContent = totalCount;
+                updateTimestamp();
+
+                const lunarDistance = (closestDistance / 384400).toFixed(2);
+                const distanceKm = (closestDistance / 1000000).toFixed(2);
+                
+                const safetyMessage = hazardousCount > 0 
+                    ? `${hazardousCount} object${hazardousCount > 1 ? 's' : ''} classified as potentially hazardous but all are being safely monitored.`
+                    : 'All objects are classified as safe. No threats detected.';
+                
+                const content = `
+                    <div class="info-banner">
+                        <strong>What does this mean?</strong> These asteroids are passing near Earth today. "Near" in space terms means millions of kilometers away - all at safe distances. NASA continuously tracks these objects to ensure public safety.
+                    </div>
+                    
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Asteroids Passing Today</div>
+                            <div class="stat-value">${totalCount}</div>
+                            <div class="stat-description">Objects making close approaches</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Potentially Hazardous</div>
+                            <div class="stat-value">${hazardousCount}</div>
+                            <div class="stat-description">${safetyMessage}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Closest Distance</div>
+                            <div class="stat-value">${lunarDistance} LD</div>
+                            <div class="stat-description">${distanceKm} million km away</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Largest Object</div>
+                            <div class="stat-value">${Math.round(largestSize)}m</div>
+                            <div class="stat-description">Estimated maximum diameter</div>
+                        </div>
+                    </div>
+                    
+                    <div class="asteroid-list">
+                        <div class="list-title">Today's Close Approaches</div>
+                        ${asteroids.slice(0, 5).map(asteroid => {
+                            const dist = parseFloat(asteroid.close_approach_data[0].miss_distance.kilometers);
+                            const distLD = (dist / 384400).toFixed(2);
+                            const distMillion = (dist / 1000000).toFixed(2);
+                            const size = Math.round(asteroid.estimated_diameter.meters.estimated_diameter_max);
+                            const velocity = Math.round(parseFloat(asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour));
+                            
+                            return `
+                                <div class="asteroid-item">
+                                    <div class="asteroid-name">
+                                        ${asteroid.name}
+                                        ${asteroid.is_potentially_hazardous_asteroid 
+                                            ? '<span class="hazard-badge">POTENTIALLY HAZARDOUS</span>' 
+                                            : '<span class="safe-badge">SAFE</span>'}
+                                    </div>
+                                    <div class="asteroid-details">
+                                        <span><strong>Distance:</strong> ${distLD} LD (${distMillion}M km)</span>
+                                        <span><strong>Size:</strong> ~${size} meters</span>
+                                        <span><strong>Speed:</strong> ${velocity.toLocaleString()} km/h</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div class="refresh-info">
+                        <strong>Note:</strong> LD = Lunar Distance (distance from Earth to Moon = 384,400 km). 
+                        Data updates every 5 minutes from NASA's Near Earth Object Web Service.
+                    </div>
+                `;
+                
+                document.getElementById('panelContent').innerHTML = content;
+                
+            } catch (error) {
+                console.error('Error fetching asteroid data:', error);
+                document.getElementById('panelContent').innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #64748b;">
+                        <p style="margin-bottom: 10px;"><strong>Connection Error</strong></p>
+                        <p style="font-size: 0.9rem; line-height: 1.6;">Unable to retrieve data from NASA servers. This could be due to network connectivity or API limitations.</p>
+                        <button onclick="fetchAsteroidData()" style="margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Try Again</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Close panel when clicking outside
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('notificationPanel');
+            const circle = document.querySelector('.notification-circle');
+            
+            if (isOpen && !panel.contains(event.target) && !circle.contains(event.target)) {
+                togglePanel();
+            }
+        });
+
+        // Initial load
+        fetchAsteroidData();
+        
+        // Auto-refresh every 5 minutes
+        setInterval(fetchAsteroidData, 300000);
+        
+        // Update "time ago" display every 30 seconds
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('updateTime').textContent = `Updated at ${timeStr}`;
+        }, 30000);
+    </script>
+</body>
+</html>

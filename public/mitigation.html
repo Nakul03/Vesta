@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteroid Defense Command</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(to bottom right, #020617, #581c87, #020617);
+            color: white;
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 72rem;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            font-size: 1rem;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .menu-screen {
+            text-align: center;
+            padding: 5rem 0;
+        }
+
+        .card {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 3rem;
+            max-width: 42rem;
+            margin: 0 auto;
+            border: 2px solid #a855f7;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .instructions {
+            text-align: left;
+            margin-bottom: 2rem;
+            color: #d1d5db;
+        }
+
+        .instructions p {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 1rem 3rem;
+            border-radius: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #3b82f6, #9333ea);
+        }
+
+        .btn-success {
+            background: linear-gradient(to right, #10b981, #2563eb);
+        }
+
+        .btn-danger {
+            background: linear-gradient(to right, #ef4444, #9333ea);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            font-size: 1.25rem;
+            padding: 1rem 2rem;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .stats-bar {
+            background: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #a855f7;
+            margin-bottom: 1rem;
+        }
+
+        .stats-left {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .level-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .canvas-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border: 4px solid #a855f7;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            cursor: crosshair;
+            background: #020617;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .notifications {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .notification {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: #10b981;
+        }
+
+        .notification.error {
+            background: #ef4444;
+        }
+
+        .notification.info {
+            background: #3b82f6;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .weapons-panel {
+            background: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid #a855f7;
+        }
+
+        .weapons-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .weapons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .weapon-btn {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            font-size: 0.875rem;
+        }
+
+        .weapon-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .weapon-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .weapon-btn.selected {
+            outline: 4px solid #facc15;
+            transform: scale(1.05);
+        }
+
+        .weapon-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .weapon-name {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .weapon-cost, .weapon-power {
+            display: block;
+            font-size: 0.75rem;
+        }
+
+        .weapon-pointer {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            font-size: 1.5rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .end-screen {
+            text-align: center;
+            padding: 5rem 0;
+        }
+
+        .end-card {
+            background: linear-gradient(to bottom right, #064e3b, #1e3a8a);
+            border-radius: 1rem;
+            padding: 3rem;
+            max-width: 42rem;
+            margin: 0 auto;
+            border: 4px solid #4ade80;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .end-card.failure {
+            background: linear-gradient(to bottom right, #7f1d1d, #581c87);
+            border-color: #ef4444;
+        }
+
+        .end-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .end-title {
+            font-size: 2.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .end-score {
+            font-size: 3.75rem;
+            font-weight: bold;
+            color: #facc15;
+            margin-bottom: 1.5rem;
+        }
+
+        .end-stats {
+            margin-bottom: 2rem;
+            font-size: 1.25rem;
+        }
+
+        .end-stats p {
+            margin-bottom: 0.5rem;
+        }
+
+        .end-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .weapons-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-left {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                font-size: 1.25rem;
+                padding: 0.75rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">ASTEROID DEFENSE COMMAND</h1>
+            <p class="subtitle">Protect Earth from incoming threats</p>
+        </div>
+
+        <!-- Menu Screen -->
+        <div id="menuScreen" class="screen active">
+            <div class="menu-screen">
+                <div class="card">
+                    <!--<div class="card-icon">&#128640;</div>-->
+                    <h2 class="card-title">Mission Briefing</h2>
+                    <div class="instructions">
+                        <p><strong>Mission:</strong> Click weapons and drag them to asteroids to deploy</p>
+                        <p><strong>Budget:</strong> Each weapon costs money - spend wisely</p>
+                        <p><strong>Objective:</strong> Survive for 30 seconds per level</p>
+                        <p><strong>Warning:</strong> If ANY asteroid reaches Earth, it's game over</p>
+                        <p><strong>Strategy:</strong> Bigger asteroids need more firepower</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGame()">START MISSION</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="stats-bar">
+                <div class="stats-left">
+                    <div class="stat-item">
+                        <span>&#127942;</span>
+                        <span id="scoreDisplay">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>&#128176;</span>
+                        <span id="budgetDisplay">$1000</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>&#9200;</span>
+                        <span id="timeDisplay">30s</span>
+                    </div>
+                </div>
+                <div class="level-display" id="levelDisplay">LEVEL 1</div>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+                <div class="notifications" id="notifications"></div>
+            </div>
+
+            <div class="weapons-panel">
+                <h3 class="weapons-title">Select Your Weapon (Click then click asteroid)</h3>
+                <div class="weapons-grid" id="weaponsGrid"></div>
+            </div>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="successScreen" class="screen">
+            <div class="end-screen">
+                <div class="end-card">
+                    <div class="end-icon">&#127881;</div>
+                    <h2 class="end-title" id="successTitle">LEVEL COMPLETE</h2>
+                    <div class="end-score" id="successScore">0 POINTS</div>
+                    <div class="end-stats">
+                        <p id="asteroidsDestroyed">Asteroids Destroyed: 0</p>
+                        <p id="remainingBudget">Remaining Budget: $0</p>
+                    </div>
+                    <div class="end-buttons">
+                        <button class="btn btn-success" onclick="nextLevel()">NEXT LEVEL</button>
+                        <button class="btn btn-secondary" onclick="showMenu()">MAIN MENU</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Failure Screen -->
+        <div id="failureScreen" class="screen">
+            <div class="end-screen">
+                <div class="end-card failure">
+                    <div class="end-icon">&#128165;</div>
+                    <h2 class="end-title">EARTH DESTROYED</h2>
+                    <div class="end-score" id="failureScore">0 POINTS</div>
+                    <p class="end-stats" id="failureLevel">You reached Level 1</p>
+                    <button class="btn btn-danger" onclick="startGame()">TRY AGAIN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            screen: 'menu',
+            level: 1,
+            score: 0,
+            budget: 1000,
+            timeRemaining: 30,
+            threats: [],
+            selectedStrategy: null,
+            deployedMissions: [],
+            particles: [],
+            mousePos: { x: 0, y: 0 }
+        };
+
+        // Weapon Strategies
+        const strategies = [
+            { id: 'kinetic', name: 'Kinetic', icon: '&#128640;', cost: 200, power: 30, speed: 5, color: '#3b82f6' },
+            { id: 'nuclear', name: 'Nuclear', icon: '&#128163;', cost: 500, power: 80, speed: 8, color: '#ef4444' },
+            { id: 'laser', name: 'Laser', icon: '&#9889;', cost: 300, power: 40, speed: 10, color: '#a855f7' },
+            { id: 'gravity', name: 'Gravity', icon: '&#127744;', cost: 150, power: 20, speed: 3, color: '#10b981' }
+        ];
+
+        let canvas, ctx;
+        let gameLoopInterval, timerInterval, spawnInterval;
+
+        // Initialize
+        window.onload = function() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            setupWeaponsGrid();
+            canvas.addEventListener('click', handleCanvasClick);
+            canvas.addEventListener('mousemove', handleCanvasMove);
+        };
+
+        function showScreen(screenName) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenName + 'Screen').classList.add('active');
+            gameState.screen = screenName;
+        }
+
+        function showMenu() {
+            clearIntervals();
+            showScreen('menu');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notifContainer = document.getElementById('notifications');
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.textContent = message;
+            notifContainer.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.remove();
+            }, 3000);
+        }
+
+        function generateThreat() {
+            const size = 20 + Math.random() * 40;
+            const health = Math.floor(size * (1 + gameState.level * 0.5));
+            return {
+                id: Date.now() + Math.random(),
+                x: Math.random() * 600 + 100,
+                y: -50,
+                size,
+                health,
+                maxHealth: health,
+                speed: 0.5 + Math.random() * 0.5 + gameState.level * 0.1,
+                rotation: 0,
+                value: Math.floor(health / 2)
+            };
+        }
+
+        function startGame() {
+            clearIntervals();
+            gameState = {
+                screen: 'game',
+                level: 1,
+                score: 0,
+                budget: 1000,
+                timeRemaining: 30,
+                threats: [generateThreat()],
+                selectedStrategy: null,
+                deployedMissions: [],
+                particles: [],
+                mousePos: { x: 0, y: 0 }
+            };
+            
+            updateUI();
+            showScreen('game');
+            showNotification('Defend Earth! Click and drag weapons to asteroids', 'success');
+            
+            startGameLoops();
+        }
+
+        function startGameLoops() {
+            timerInterval = setInterval(() => {
+                gameState.timeRemaining--;
+                updateUI();
+                if (gameState.timeRemaining <= 0) {
+                    levelComplete();
+                }
+            }, 1000);
+
+            spawnInterval = setInterval(() => {
+                if (gameState.threats.length < 3 + gameState.level && Math.random() > 0.5) {
+                    gameState.threats.push(generateThreat());
+                }
+            }, 2000);
+
+            gameLoopInterval = setInterval(gameLoop, 1000 / 60);
+        }
+
+        function clearIntervals() {
+            if (timerInterval) clearInterval(timerInterval);
+            if (spawnInterval) clearInterval(spawnInterval);
+            if (gameLoopInterval) clearInterval(gameLoopInterval);
+        }
+
+        function gameLoop() {
+            updateThreats();
+            updateMissions();
+            updateParticles();
+            render();
+        }
+
+        function updateThreats() {
+            gameState.threats = gameState.threats.map(threat => ({
+                ...threat,
+                y: threat.y + threat.speed,
+                rotation: threat.rotation + 0.02
+            })).filter(threat => {
+                if (threat.y > 600) {
+                    gameOver();
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        function updateMissions() {
+            gameState.deployedMissions = gameState.deployedMissions.map(mission => {
+                const threat = gameState.threats.find(t => t.id === mission.targetId);
+                if (!threat) return null;
+
+                const dx = threat.x - mission.x;
+                const dy = threat.y - mission.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 30) {
+                    gameState.threats = gameState.threats.map(t => {
+                        if (t.id === threat.id) {
+                            const newHealth = t.health - mission.strategy.power;
+                            if (newHealth <= 0) {
+                                createExplosion(t.x, t.y, mission.strategy.color);
+                                gameState.score += t.value;
+                                gameState.budget += Math.floor(t.value / 2);
+                                showNotification(`+${t.value} points`, 'success');
+                                updateUI();
+                                return null;
+                            }
+                            return { ...t, health: newHealth };
+                        }
+                        return t;
+                    }).filter(Boolean);
+                    return null;
+                }
+
+                return {
+                    ...mission,
+                    x: mission.x + (dx / distance) * mission.strategy.speed,
+                    y: mission.y + (dy / distance) * mission.strategy.speed
+                };
+            }).filter(Boolean);
+        }
+
+        function updateParticles() {
+            gameState.particles = gameState.particles.map(p => ({
+                ...p,
+                x: p.x + p.vx,
+                y: p.y + p.vy,
+                life: p.life - 0.02
+            })).filter(p => p.life > 0);
+        }
+
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 20; i++) {
+                gameState.particles.push({
+                    id: Date.now() + i,
+                    x, y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 1,
+                    color
+                });
+            }
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, 800, 600);
+            ctx.fillStyle = '#0a0a1a';
+            ctx.fillRect(0, 0, 800, 600);
+
+            // Stars
+            for (let i = 0; i < 100; i++) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fillRect((i * 37) % 800, (i * 73) % 600, 1, 1);
+            }
+
+            // Earth
+            ctx.save();
+            ctx.translate(400, 580);
+            const gradient = ctx.createRadialGradient(0, 0, 30, 0, 0, 50);
+            gradient.addColorStop(0, '#3b82f6');
+            gradient.addColorStop(0.5, '#2563eb');
+            gradient.addColorStop(1, '#1e40af');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, 50, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath();
+            ctx.ellipse(-10, -5, 15, 10, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(15, 0, 12, 8, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Threats
+            gameState.threats.forEach(threat => {
+                ctx.save();
+                ctx.translate(threat.x, threat.y);
+                ctx.rotate(threat.rotation);
+                
+                ctx.fillStyle = '#6b7280';
+                ctx.beginPath();
+                ctx.arc(0, 0, threat.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#4b5563';
+                ctx.beginPath();
+                ctx.arc(threat.size * 0.3, 0, threat.size * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(-threat.size * 0.2, threat.size * 0.3, threat.size * 0.15, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // Health bar
+                const barWidth = threat.size * 2;
+                const barHeight = 5;
+                const healthPercent = threat.health / threat.maxHealth;
+                
+                ctx.fillStyle = '#374151';
+                ctx.fillRect(threat.x - barWidth / 2, threat.y - threat.size - 15, barWidth, barHeight);
+                
+                ctx.fillStyle = healthPercent > 0.5 ? '#10b981' : healthPercent > 0.25 ? '#f59e0b' : '#ef4444';
+                ctx.fillRect(threat.x - barWidth / 2, threat.y - threat.size - 15, barWidth * healthPercent, barHeight);
+            });
+
+            // Missions
+            gameState.deployedMissions.forEach(mission => {
+                ctx.save();
+                ctx.translate(mission.x, mission.y);
+                
+                const missionGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 15);
+                missionGradient.addColorStop(0, mission.strategy.color);
+                missionGradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = missionGradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, 15, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(mission.strategy.icon, 0, 0);
+                ctx.restore();
+
+                ctx.strokeStyle = mission.strategy.color + '40';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(mission.x, mission.y);
+                ctx.lineTo(mission.targetX, mission.targetY);
+                ctx.stroke();
+            });
+
+            // Particles
+            gameState.particles.forEach(particle => {
+                ctx.fillStyle = particle.color + Math.floor(particle.life * 255).toString(16).padStart(2, '0');
+                ctx.fillRect(particle.x - 2, particle.y - 2, 4, 4);
+            });
+        }
+
+        function setupWeaponsGrid() {
+            const grid = document.getElementById('weaponsGrid');
+            grid.innerHTML = strategies.map(s => `
+                <button class="weapon-btn" style="background-color: ${s.color}" 
+                        onclick="selectWeapon('${s.id}')" id="weapon-${s.id}">
+                    <div class="weapon-icon">${s.icon}</div>
+                    <span class="weapon-name">${s.name}</span>
+                    <span class="weapon-cost">Cost: $${s.cost}</span>
+                    <span class="weapon-power">Power: ${s.power} DMG</span>
+                </button>
+            `).join('');
+        }
+
+        function selectWeapon(id) {
+            const strategy = strategies.find(s => s.id === id);
+            if (gameState.budget < strategy.cost) {
+                showNotification('Not enough budget', 'error');
+                return;
+            }
+            gameState.selectedStrategy = strategy;
+            updateWeaponSelection();
+            showNotification(`${strategy.name} selected! Click an asteroid to deploy`, 'info');
+        }
+
+        function updateWeaponSelection() {
+            strategies.forEach(s => {
+                const btn = document.getElementById(`weapon-${s.id}`);
+                btn.classList.toggle('selected', gameState.selectedStrategy?.id === s.id);
+                btn.disabled = gameState.budget < s.cost;
+            });
+        }
+
+        function handleCanvasClick(e) {
+            if (!gameState.selectedStrategy) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const nearest = gameState.threats.reduce((closest, threat) => {
+                const dist = Math.sqrt((threat.x - x) ** 2 + (threat.y - y) ** 2);
+                return dist < 60 && dist < closest.dist ? { threat, dist } : closest;
+            }, { threat: null, dist: Infinity });
+
+            if (nearest.threat) {
+                deployMission(gameState.selectedStrategy, nearest.threat);
+                gameState.selectedStrategy = null;
+                updateWeaponSelection();
+            }
+        }
+
+        function handleCanvasMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            gameState.mousePos = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function deployMission(strategy, targetThreat) {
+            if (gameState.budget < strategy.cost) {
+                showNotification('Insufficient budget', 'error');
+                return;
+            }
+
+            gameState.budget -= strategy.cost;
+            gameState.deployedMissions.push({
+                id: Date.now(),
+                strategy,
+                x: 400,
+                y: 550,
+                targetX: targetThreat.x,
+                targetY: targetThreat.y,
+                targetId: targetThreat.id
+            });
+
+            updateUI();
+            showNotification(`${strategy.name} deployed`, 'info');
+        }
+
+        function updateUI() {
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+            document.getElementById('budgetDisplay').textContent = `$${gameState.budget}`;
+            document.getElementById('timeDisplay').textContent = `${gameState.timeRemaining}s`;
+            document.getElementById('levelDisplay').textContent = `LEVEL ${gameState.level}`;
+            updateWeaponSelection();
+        }
+
+        function levelComplete() {
+            clearIntervals();
+            document.getElementById('successTitle').textContent = `LEVEL ${gameState.level} COMPLETE`;
+            document.getElementById('successScore').textContent = `${gameState.score} POINTS`;
+            document.getElementById('asteroidsDestroyed').textContent = `Asteroids Destroyed: ${Math.floor(gameState.score / 50)}`;
+            document.getElementById('remainingBudget').textContent = `Remaining Budget: $${gameState.budget}`;
+            showScreen('success');
+        }
+
+        function gameOver() {
+            clearIntervals();
+            document.getElementById('failureScore').textContent = `${gameState.score} POINTS`;
+            document.getElementById('failureLevel').textContent = `You reached Level ${gameState.level}`;
+            showScreen('failure');
+            showNotification('Earth has been hit', 'error');
+        }
+
+        function nextLevel() {
+            gameState.level++;
+            gameState.timeRemaining = 30;
+            gameState.budget += 500;
+            gameState.threats = [generateThreat()];
+            gameState.deployedMissions = [];
+            gameState.particles = [];
+            gameState.selectedStrategy = null;
+            
+            updateUI();
+            showScreen('game');
+            showNotification(`Level ${gameState.level} - Difficulty increased`, 'info');
+            startGameLoops();
+        }
+    </script>
+</body>
+</html>

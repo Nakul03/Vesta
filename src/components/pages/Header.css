@@ -1,0 +1,38 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.header-title-container {
+  display: flex;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.header-buttons-container {
+  display: flex;
+  align-items: center;
+}
+
+.github-button {
+  /* Approximating Tailwind's ghost button */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  color: white;
+}
+
+.github-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}

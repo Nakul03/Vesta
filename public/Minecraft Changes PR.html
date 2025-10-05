@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft K-T Extinction Event VR</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; }
+        body { margin: 0; overflow: hidden; font-family: 'Courier New', monospace; }
+        
+        #ui {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.95);
+            padding: 25px 40px;
+            border-radius: 4px;
+            color: white;
+            text-align: center;
+            border: 4px solid #00AA00;
+            z-index: 1000;
+            min-width: 600px;
+            box-shadow: 0 0 20px rgba(0,170,0,0.5);
+        }
+        
+        h2 {
+            color: #00FF00;
+            margin: 0 0 15px 0;
+            font-size: 24px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px #003300;
+        }
+        
+        p {
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #AAAAAA;
+        }
+        
+        button {
+            background: linear-gradient(180deg, #7CFC00, #228B22);
+            border: 3px solid #006400;
+            color: white;
+            padding: 15px 35px;
+            margin: 10px 5px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Courier New', monospace;
+            text-shadow: 1px 1px #000;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(0,255,0,0.5);
+            background: linear-gradient(180deg, #90EE90, #2E8B57);
+        }
+        
+        #stats {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.95);
+            padding: 20px;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            z-index: 1000;
+            border: 3px solid #00AA00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .stat { margin: 8px 0; }
+        .label { color: #888; }
+        .value { color: #00FF00; font-weight: bold; float: right; margin-left: 20px; }
+        
+        @media (max-width: 768px) {
+            #ui { min-width: 90%; left: 5%; transform: none; }
+        }
+    </style>
+</head>
+<body>
+<a-scene background="color: #87CEEB" fog="type: linear; color: #87CEEB; far: 600">
+    <a-assets>
+        <img id="grass-top" crossorigin="anonymous" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAOElEQVQoU2NkYGD4z4AHMDEY1QAyBJ0Nk0NXgKwB2QXILkBXhOwCdEXILkBXhOwCdEXILkBXBABvKAkIwvs1ZQAAAABJRU5ErkJggg==">
+        <img id="stone-tex" crossorigin="anonymous" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAMklEQVQoU2NkYGD4z4AHMDEY1QAyBFnRfwYGBoaLFy8yoitA1oCuAF0RAwOKAnRFAKjTBwhhKGKRAAAAAElFTkSuQmCC">
+        <!-- ★ NEW: realistic asteroid texture ★ -->
+        <img id="asteroid-texture"
+             crossorigin="anonymous"
+             src="https://svs.gsfc.nasa.gov/5069#media_group_313009">
+    </a-assets>
+
+    <!-- Minecraft Sky -->
+    <a-sky id="sky" color="#87CEEB"></a-sky>
+    
+    <!-- Lighting -->
+    <a-entity id="sun" light="type: directional; color: #FFF; intensity: 1.5; castShadow: true" position="100 150 100"></a-entity>
+    <a-light type="ambient" color="#BBB" intensity="0.7"></a-light>
+
+    <!-- Minecraft Grass Layer Ground -->
+    <a-box id="ground" position="0 -1 0" width="1000" height="2" depth="1000" 
+           color="#7CBD3B" roughness="1" shadow="receive: true">
+        <!-- Dirt layer underneath -->
+        <a-box position="0 -1.5 0" width="1000" height="1" depth="1000" color="#8B6914"></a-box>
+    </a-box>
+
+    <!-- Realistic Minecraft Mountains - Layered stone blocks -->
+    <a-entity id="mountains">
+        <!-- Mountain 1 - Large peak -->
+        <a-entity position="120 0 -220">
+            <!-- Base layers -->
+            <a-box position="0 5 0" width="80" height="10" depth="80" color="#7A7A7A" shadow="cast: true"></a-box>
+            <a-box position="0 15 0" width="70" height="10" depth="70" color="#808080"></a-box>
+            <a-box position="0 25 0" width="60" height="10" depth="60" color="#7A7A7A"></a-box>
+            <a-box position="0 35 0" width="50" height="10" depth="50" color="#888888"></a-box>
+            <a-box position="0 45 0" width="40" height="10" depth="40" color="#7A7A7A"></a-box>
+            <a-box position="0 55 0" width="30" height="10" depth="30" color="#909090"></a-box>
+            <a-box position="0 65 0" width="20" height="10" depth="20" color="#7A7A7A"></a-box>
+            <a-box position="0 75 0" width="10" height="10" depth="10" color="#989898"></a-box>
+            <!-- Snow cap -->
+            <a-box position="0 85 0" width="8" height="6" depth="8" color="#FFFFFF"></a-box>
+            <a-box position="0 91 0" width="4" height="4" depth="4" color="#F0F0F0"></a-box>
+        </a-entity>
+
+        <!-- Mountain 2 - Medium peak -->
+        <a-entity position="-100 0 -200">
+            <a-box position="0 5 0" width="70" height="10" depth="70" color="#6A6A6A"></a-box>
+            <a-box position="0 15 0" width="60" height="10" depth="60" color="#757575"></a-box>
+            <a-box position="0 25 0" width="50" height="10" depth="50" color="#6A6A6A"></a-box>
+            <a-box position="0 35 0" width="40" height="10" depth="40" color="#808080"></a-box>
+            <a-box position="0 45 0" width="30" height="10" depth="30" color="#6A6A6A"></a-box>
+            <a-box position="0 55 0" width="20" height="10" depth="20" color="#888888"></a-box>
+            <a-box position="0 65 0" width="10" height="10" depth="10" color="#AAAAAA"></a-box>
+        </a-entity>
+
+        <!-- Mountain 3 - Smaller peak -->
+        <a-entity position="180 0 -280">
+            <a-box position="0 5 0" width="60" height="10" depth="60" color="#787878"></a-box>
+            <a-box position="0 15 0" width="50" height="10" depth="50" color="#828282"></a-box>
+            <a-box position="0 25 0" width="40" height="10" depth="40" color="#787878"></a-box>
+            <a-box position="0 35 0" width="30" height="10" depth="30" color="#8A8A8A"></a-box>
+            <a-box position="0 45 0" width="20" height="10" depth="20" color="#787878"></a-box>
+            <a-box position="0 55 0" width="10" height="10" depth="10" color="#959595"></a-box>
+        </a-entity>
+
+        <!-- Mountain 4 - Far background -->
+        <a-entity position="-180 0 -300">
+            <a-box position="0 5 0" width="65" height="10" depth="65" color="#707070"></a-box>
+            <a-box position="0 15 0" width="55" height="10" depth="55" color="#7A7A7A"></a-box>
+            <a-box position="0 25 0" width="45" height="10" depth="45" color="#707070"></a-box>
+            <a-box position="0 35 0" width="35" height="10" depth="35" color="#858585"></a-box>
+            <a-box position="0 45 0" width="25" height="10" depth="25" color="#707070"></a-box>
+            <a-box position="0 55 0" width="15" height="10" depth="15" color="#909090"></a-box>
+            <a-box position="0 65 0" width="5" height="10" depth="5" color="#A0A0A0"></a-box>
+        </a-entity>
+
+        <!-- Small hills -->
+        <a-entity position="50 0 -100">
+            <a-box position="0 2.5 0" width="40" height="5" depth="40" color="#7A7A7A"></a-box>
+            <a-box position="0 7.5 0" width="30" height="5" depth="30" color="#828282"></a-box>
+            <a-box position="0 12.5 0" width="20" height="5" depth="20" color="#8A8A8A"></a-box>
+        </a-entity>
+
+        <a-entity position="-70 0 -120">
+            <a-box position="0 2.5 0" width="35" height="5" depth="35" color="#757575"></a-box>
+            <a-box position="0 7.5 0" width="25" height="5" depth="25" color="#808080"></a-box>
+            <a-box position="0 12.5 0" width="15" height="5" depth="15" color="#8A8A8A"></a-box>
+        </a-entity>
+    </a-entity>
+
+    <!-- Dense Minecraft Forest -->
+    <a-entity id="forest">
+        <!-- Oak Trees - More realistic placement -->
+        <a-entity position="15 0 -20">
+            <a-box width="2" height="12" depth="2" color="#654321" position="0 6 0" shadow="cast: true"></a-box>
+            <a-box width="7" height="4" depth="7" color="#228B22" position="0 13 0"></a-box>
+            <a-box width="5" height="3" depth="5" color="#2E8B2E" position="0 17 0"></a-box>
+            <a-box width="3" height="2" depth="3" color="#228B22" position="0 20.5 0"></a-box>
+        </a-entity>
+        
+        <a-entity position="-25 0 -30">
+            <a-box width="2" height="14" depth="2" color="#654321" position="0 7 0"></a-box>
+            <a-box width="8" height="5" depth="8" color="#228B22" position="0 15 0"></a-box>
+            <a-box width="6" height="4" depth="6" color="#2E8B2E" position="0 20 0"></a-box>
+            <a-box width="4" height="3" depth="4" color="#228B22" position="0 24 0"></a-box>
+        </a-entity>
+        
+        <a-entity position="30 0 -40">
+            <a-box width="2" height="10" depth="2" color="#654321" position="0 5 0"></a-box>
+            <a-box width="6" height="4" depth="6" color="#2F4F2F" position="0 11 0"></a-box>
+            <a-box width="4" height="3" depth="4" color="#3A5F3A" position="0 15 0"></a-box>
+        </a-entity>
+        
+        <a-entity position="-40 0 -25">
+            <a-box width="2" height="13" depth="2" color="#654321" position="0 6.5 0"></a-box>
+            <a-box width="7" height="5" depth="7" color="#228B22" position="0 14 0"></a-box>
+            <a-box width="5" height="3" depth="5" color="#2E8B2E" position="0 18.5 0"></a-box>
+        </a-entity>
+
+        <!-- More trees for dense forest -->
+        <a-entity position="5 0 -35">
+            <a-box width="2" height="11" depth="2" color="#5D4E37" position="0 5.5 0"></a-box>
+            <a-box width="6" height="4" depth="6" color="#228B22" position="0 12 0"></a-box>
+            <a-box width="4" height="2" depth="4" color="#2E8B2E" position="0 15 0"></a-box>
+        </a-entity>
+
+        <a-entity position="-10 0 -45">
+            <a-box width="2" height="12" depth="2" color="#654321" position="0 6 0"></a-box>
+            <a-box width="7" height="4" depth="7" color="#1E6B1E" position="0 13 0"></a-box>
+            <a-box width="5" height="3" depth="5" color="#228B22" position="0 17 0"></a-box>
+        </a-entity>
+
+        <a-entity position="35 0 -28">
+            <a-box width="2" height="10" depth="2" color="#654321" position="0 5 0"></a-box>
+            <a-box width="6" height="4" depth="6" color="#228B22" position="0 11 0"></a-box>
+        </a-entity>
+
+        <!-- Bushes and grass blocks -->
+        <a-box position="8 0.5 -12" width="2" height="1" depth="2" color="#2E8B2E"></a-box>
+        <a-box position="-15 0.5 -18" width="2" height="1" depth="2" color="#228B22"></a-box>
+        <a-box position="20 0.5 -25" width="2" height="1" depth="2" color="#2E8B2E"></a-box>
+        <a-box position="-8 0.5 -22" width="2" height="1" depth="2" color="#1E6B1E"></a-box>
+
+        <!-- Flowers -->
+        <a-box position="12 0.2 -15" width="0.5" height="1.2" depth="0.5" color="#228B22"></a-box>
+        <a-box position="12 1.5 -15" width="1.2" height="0.3" depth="1.2" color="#FF0000"></a-box>
+        
+        <a-box position="-18 0.2 -20" width="0.5" height="1.2" depth="0.5" color="#228B22"></a-box>
+        <a-box position="-18 1.5 -20" width="1.2" height="0.3" depth="1.2" color="#FFFF00"></a-box>
+    </a-entity>
+
+    <!-- Minecraft Mobs (Dinosaurs) -->
+    <a-entity id="dinosaurs">
+        <!-- Blocky T-Rex with better proportions -->
+        <a-entity id="trex" position="20 0 -30" rotation="0 -120 0">
+            <!-- Body -->
+            <a-box width="4" height="6" depth="3" color="#6B5D4F" position="0 4 0" shadow="cast: true">
+                <!-- Textured skin -->
+                <a-box width="3.8" height="5.8" depth="2.8" color="#7D6C5A" position="0 0 0"></a-box>
+                <!-- Head -->
+                <a-box width="3" height="3.5" depth="4" color="#7D6C5A" position="0 4.5 2">
+                    <!-- Eyes -->
+                    <a-box width="0.6" height="0.6" depth="0.3" color="#FFA500" position="1 0.8 1.8"></a-box>
+                    <a-box width="0.6" height="0.6" depth="0.3" color="#FFA500" position="-1 0.8 1.8"></a-box>
+                    <a-box width="0.3" height="0.3" depth="0.3" color="#000" position="1 0.8 2"></a-box>
+                    <a-box width="0.3" height="0.3" depth="0.3" color="#000" position="-1 0.8 2"></a-box>
+                    <!-- Jaw with teeth -->
+                    <a-box width="2.5" height="1.5" depth="2" color="#5D4C3D" position="0 -1.5 1.5"></a-box>
+                    <a-box width="0.3" height="0.5" depth="0.3" color="#FFF" position="0.8 -1 2.5"></a-box>
+                    <a-box width="0.3" height="0.5" depth="0.3" color="#FFF" position="-0.8 -1 2.5"></a-box>
+                    <a-box width="0.3" height="0.5" depth="0.3" color="#FFF" position="0 -1 2.5"></a-box>
+                </a-box>
+                <!-- Tail -->
+                <a-box width="1.5" height="1.5" depth="10" color="#6B5D4F" position="0 0 -6.5" rotation="15 0 0"></a-box>
+                <a-box width="1" height="1" depth="6" color="#6B5D4F" position="0 -1 -13" rotation="25 0 0"></a-box>
+                <!-- Small arms -->
+                <a-box width="0.8" height="2" depth="0.8" color="#6B5D4F" position="1.8 1.5 1.5" rotation="0 0 30"></a-box>
+                <a-box width="0.8" height="2" depth="0.8" color="#6B5D4F" position="-1.8 1.5 1.5" rotation="0 0 -30"></a-box>
+            </a-box>
+            <!-- Strong legs -->
+            <a-box width="1.5" height="5" depth="2" color="#6B5D4F" position="1.2 1.5 0" shadow="cast: true"></a-box>
+            <a-box width="1.5" height="5" depth="2" color="#6B5D4F" position="-1.2 1.5 0" shadow="cast: true"></a-box>
+            <!-- Feet -->
+            <a-box width="2" height="1" depth="3" color="#5D4C3D" position="1.2 -1 1"></a-box>
+            <a-box width="2" height="1" depth="3" color="#5D4C3D" position="-1.2 -1 1"></a-box>
+            <!-- Claws -->
+            <a-box width="0.3" height="0.5" depth="0.3" color="#3A3A3A" position="1.8 -1.2 2"></a-box>
+            <a-box width="0.3" height="0.5" depth="0.3" color="#3A3A3A" position="0.6 -1.2 2"></a-box>
+        </a-entity>
+
+        <!-- Detailed Triceratops -->
+        <a-entity id="trike" position="-18 0 -25" rotation="0 60 0">
+            <a-box width="5" height="4" depth="9" color="#8B7355" position="0 3 0" shadow="cast: true">
+                <!-- Head with detailed frill -->
+                <a-box width="4" height="3.5" depth="4" color="#9B8365" position="0 0.5 5.5">
+                    <!-- Frill - layered blocks -->
+                    <a-box width="6" height="4" depth="1" color="#A39375" position="0 2 -0.5"></a-box>
+                    <a-box width="5" height="3" depth="0.8" color="#B3A385" position="0 2.5 -0.3"></a-box>
+                    <!-- Three horns -->
+                    <a-box width="0.6" height="2.5" depth="0.6" color="#E0E0E0" position="1.2 0.8 2" rotation="40 0 0"></a-box>
+                    <a-box width="0.6" height="2.5" depth="0.6" color="#E0E0E0" position="-1.2 0.8 2" rotation="40 0 0"></a-box>
+                    <a-box width="0.7" height="1.8" depth="0.7" color="#D0D0D0" position="0 -0.5 2.5" rotation="25 0 0"></a-box>
+                    <!-- Eyes -->
+                    <a-box width="0.5" height="0.5" depth="0.3" color="#000" position="1.2 0.5 1.5"></a-box>
+                    <a-box width="0.5" height="0.5" depth="0.3" color="#000" position="-1.2 0.5 1.5"></a-box>
+                </a-box>
+                <!-- Thick tail -->
+                <a-box width="2" height="2" depth="6" color="#8B7355" position="0 0 -7.5" rotation="10 0 0"></a-box>
+                <a-box width="1.5" height="1.5" depth="3" color="#8B7355" position="0 -0.5 -12" rotation="15 0 0"></a-box>
+            </a-box>
+            <!-- Four sturdy legs -->
+            <a-box width="1.8" height="3.5" depth="1.8" color="#8B7355" position="1.8 0.75 3" shadow="cast: true"></a-box>
+            <a-box width="1.8" height="3.5" depth="1.8" color="#8B7355" position="-1.8 0.75 3"></a-box>
+            <a-box width="1.8" height="3.5" depth="1.8" color="#8B7355" position="1.8 0.75 -3"></a-box>
+            <a-box width="1.8" height="3.5" depth="1.8" color="#8B7355" position="-1.8 0.75 -3"></a-box>
+        </a-entity>
+
+        <!-- Massive Brachiosaurus -->
+        <a-entity id="brach" position="-35 0 -50" rotation="0 30 0">
+            <a-box width="6" height="9" depth="13" color="#9B8B6B" position="0 6 0" shadow="cast: true">
+                <!-- Very long neck -->
+                <a-box width="2.5" height="22" depth="2.5" color="#9B8B6B" position="0 15 3" rotation="25 0 0"></a-box>
+                <!-- Head at top -->
+                <a-box width="3" height="3.5" depth="4.5" color="#AB9B7B" position="0 29 10">
+                    <a-box width="0.5" height="0.5" depth="0.3" color="#000" position="1 0.8 2"></a-box>
+                    <a-box width="0.5" height="0.5" depth="0.3" color="#000" position="-1 0.8 2"></a-box>
+                    <!-- Snout -->
+                    <a-box width="2" height="1.5" depth="2" color="#9B8B6B" position="0 -0.5 2.5"></a-box>
+                </a-box>
+                <!-- Long tail -->
+                <a-box width="2.5" height="2.5" depth="12" color="#9B8B6B" position="0 1 -12" rotation="20 0 0"></a-box>
+                <a-box width="1.5" height="1.5" depth="8" color="#9B8B6B" position="0 -1.5 -22" rotation="30 0 0"></a-box>
+            </a-box>
+            <!-- Massive legs -->
+            <a-box width="2.5" height="11" depth="2.5" color="#9B8B6B" position="2.8 2.5 4" shadow="cast: true"></a-box>
+            <a-box width="2.5" height="11" depth="2.5" color="#9B8B6B" position="-2.8 2.5 4"></a-box>
+            <a-box width="2.5" height="11" depth="2.5" color="#9B8B6B" position="2.8 2.5 -4"></a-box>
+            <a-box width="2.5" height="11" depth="2.5" color="#9B8B6B" position="-2.8 2.5 -4"></a-box>
+        </a-entity>
+
+        <!-- Agile Velociraptor -->
+        <a-entity position="12 0 -15" rotation="0 200 0">
+            <a-box width="1.5" height="2.5" depth="3.5" color="#7A6A5A" position="0 2 0" shadow="cast: true">
+                <!-- Head -->
+                <a-box width="1.5" height="1.8" depth="2" color="#8A7A6A" position="0 2 1.5">
+                    <!-- Snout -->
+                    <a-box width="1" height="1" depth="1.5" color="#7A6A5A" position="0 -0.3 1.2"></a-box>
+                    <!-- Eyes -->
+                    <a-box width="0.4" height="0.4" depth="0.3" color="#FFA500" position="0.5 0.4 0.8"></a-box>
+                    <a-box width="0.4" height="0.4" depth="0.3" color="#FFA500" position="-0.5 0.4 0.8"></a-box>
+                    <a-box width="0.2" height="0.2" depth="0.2" color="#000" position="0.5 0.4 1"></a-box>
+                    <a-box width="0.2" height="0.2" depth="0.2" color="#000" position="-0.5 0.4 1"></a-box>
+                </a-box>
+                <!-- Long tail for balance -->
+                <a-box width="0.8" height="0.8" depth="4" color="#7A6A5A" position="0 0.5 -3.5" rotation="-5 0 0"></a-box>
+                <!-- Arms with claws -->
+                <a-box width="0.6" height="1.8" depth="0.6" color="#7A6A5A" position="0.8 0.8 0.8" rotation="0 0 20"></a-box>
+                <a-box width="0.6" height="1.8" depth="0.6" color="#7A6A5A" position="-0.8 0.8 0.8" rotation="0 0 -20"></a-box>
+            </a-box>
+            <!-- Legs -->
+            <a-box width="0.8" height="2.5" depth="1" color="#7A6A5A" position="0.5 0.5 0.5"></a-box>
+            <a-box width="0.8" height="2.5" depth="1" color="#7A6A5A" position="-0.5 0.5 0.5"></a-box>
+            <!-- Deadly toe claw -->
+            <a-box width="0.3" height="0.8" depth="0.3" color="#2A2A2A" position="0.5 -0.8 1.2" rotation="45 0 0"></a-box>
+        </a-entity>
+
+        <!-- Pteranodon flying -->
+        <a-entity id="ptero" position="0 15 -60" rotation="0 0 0">
+            <a-box width="1.5" height="1" depth="2" color="#8B7355" position="0 0 0">
+                <!-- Head crest -->
+                <a-box width="1" height="2" depth="1" color="#9B8365" position="0 1 -0.5" rotation="-30 0 0"></a-box>
+                <!-- Beak -->
+                <a-box width="0.6" height="0.4" depth="1.5" color="#A0A0A0" position="0 -0.3 1.2"></a-box>
+                <!-- Wings -->
+                <a-box id="wing1" width="12" height="0.3" depth="3" color="#6B5D4F" position="0 0 0" opacity="0.8"></a-box>
+            </a-box>
+            <a-animation attribute="position" from="0 15 -60" to="20 18 -80" dur="8000" direction="alternate" repeat="indefinite" easing="ease-in-out-sine"></a-animation>
+            <a-animation attribute="rotation" from="0 0 -10" to="0 0 10" dur="2000" direction="alternate" repeat="indefinite"></a-animation>
+        </a-entity>
+    </a-entity>
+
+    <!-- Realistic Minecraft Volcanoes -->
+    <a-entity id="volcano1" position="90 0 -150">
+        <!-- Mountain base - stone blocks -->
+        <a-box position="0 5 0" width="60" height="10" depth="60" color="#3C3C3C" shadow="cast: true"></a-box>
+        <a-box position="0 15 0" width="55" height="10" depth="55" color="#424242"></a-box>
+        <a-box position="0 25 0" width="48" height="10" depth="48" color="#3C3C3C"></a-box>
+        <a-box position="0 35 0" width="40" height="10" depth="40" color="#484848"></a-box>
+        <a-box position="0 45 0" width="32" height="10" depth="32" color="#3C3C3C"></a-box>
+        <a-box position="0 55 0" width="24" height="10" depth="24" color="#505050"></a-box>
+        <a-box position="0 65 0" width="16" height="10" depth="16" color="#3C3C3C"></a-box>
+        <a-box position="0 75 0" width="12" height="8" depth="12" color="#585858"></a-box>
+        <!-- Crater opening -->
+        <a-cylinder position="0 80 0" radius="4" height="2" color="#2C2C2C"></a-cylinder>
+        <a-box id="lava1" width="7" height="1" depth="7" color="#FF4400" position="0 81 0" visible="false" opacity="0.95"></a-box>
+        <a-light id="volc-light1" type="point" color="#FF4400" intensity="0" distance="90" position="0 82 0"></a-light>
+    </a-entity>
+
+    <a-entity id="volcano2" position="-110 0 -130">
+        <a-box position="0 5 0" width="50" height="10" depth="50" color="#2C2C2C" shadow="cast: true"></a-box>
+        <a-box position="0 15 0" width="45" height="10" depth="45" color="#343434"></a-box>
+        <a-box position="0 25 0" width="38" height="10" depth="38" color="#2C2C2C"></a-box>
+        <a-box position="0 35 0" width="30" height="10" depth="30" color="#3C3C3C"></a-box>
+        <a-box position="0 45 0" width="24" height="10" depth="24" color="#2C2C2C"></a-box>
+        <a-box position="0 55 0" width="18" height="10" depth="18" color="#444444"></a-box>
+        <a-box position="0 65 0" width="10" height="8" depth="10" color="#2C2C2C"></a-box>
+        <a-cylinder position="0 70 0" radius="3" height="2" color="#1C1C1C"></a-cylinder>
+        <a-box id="lava2" width="5" height="1" depth="5" color="#FF4400" position="0 71 0" visible="false" opacity="0.95"></a-box>
+        <a-light id="volc-light2" type="point" color="#FF4400" intensity="0" distance="80" position="0 72 0"></a-light>
+    </a-entity>
+
+    <!-- The ASTEROID (Single realistic textured sphere) -->
+    <a-entity id="asteroid-container" visible="false">
+        <a-entity id="asteroid" position="0 800 -1000">
+            <!-- Realistic asteroid – uses a 3D model -->
+            <a-entity gltf-model="https://cdn.glitch.global/6a734a42-7456-4748-b5e7-5999919b4359/asteroid.glb?v=1663909389500"
+                      scale="0.05 0.05 0.05"
+                      shadow="cast: true">
+            </a-entity>
+
+            <!-- Superheated plasma glow during atmospheric entry -->
+            <a-sphere id="heat-aura"
+                      radius="60"
+                      color="#FF3300"
+                      opacity="0"
+                      material="shader: flat">
+            </a-sphere>
+
+            <!-- Plasma trail (unchanged) -->
+            <a-entity id="trail" visible="false">
+                <a-cone radius-bottom="30" radius-top="50" height="160"
+                       color="#FF4400" opacity="0.7"
+                       position="0 0 80" rotation="180 0 0"></a-cone>
+                <a-cone radius-bottom="24" radius-top="38" height="130"
+                       color="#FF6600" opacity="0.6"
+                       position="0 0 95" rotation="180 0 0"></a-cone>
+                <a-cone radius-bottom="18" radius-top="28" height="100"
+                       color="#FF8800" opacity="0.5"
+                       position="0 0 110" rotation="180 0 0"></a-cone>
+                <a-cone radius-bottom="12" radius-top="18" height="70"
+                       color="#FFAA00" opacity="0.4"
+                       position="0 0 125" rotation="180 0 0"></a-cone>
+            </a-entity>
+        </a-entity>
+    </a-entity>
+
+    <!-- Impact crater and effects -->
+    <a-entity id="impact-zone" visible="false" position="0 0 -50">
+        <!-- Deep crater -->
+        <a-ring radius-inner="50" radius-outer="70" color="#2A1A0B" rotation="-90 0 0" position="0 0.2 0" segments-theta="12"></a-ring>
+        
+        <!-- Molten rock pool -->
+        <a-cylinder id="melt-pool" radius="42" height="1.5" color="#FF2200" position="0 0.5 0" opacity="0.98" segments-radial="12">
+            <a-light type="point" color="#FF3300" intensity="6" distance="120"></a-light>
+        </a-cylinder>
+        
+        <!-- Raised crater rim blocks -->
+        <a-entity id="crater-rim"></a-entity>
+    </a-entity>
+
+    <a-entity id="explosion-particles" position="0 5 -50"></a-entity>
+    <a-entity id="shockwaves" position="0 0.5 -50"></a-entity>
+    <a-entity id="debris"></a-entity>
+    <a-entity id="fires"></a-entity>
+
+    <!-- Ash and soot particles -->
+    <a-entity id="ash-particle-system"
+              particle-system="preset: dust; color: #0a0a0a,#1a1a1a; particleCount: 4000; size: 1.5; maxAge: 10; velocityValue: 0 -3 0; velocitySpread: 10 2 10; accelerationValue: 0 -0.3 0"
+              position="0 100 0"
+              visible="false"></a-entity>
+
+    <!-- Camera with Minecraft‑style movement -->
+    <a-entity id="rig" position="0 1.6 40">
+        <a-camera id="camera" wasd-controls="acceleration: 45" look-controls>
+            <a-cursor color="#00FF00"></a-cursor>
+        </a-camera>
+    </a-entity>
+</a-scene>
+
+<div id="stats">
+    <h3 style="color:#00FF00; margin:0 0 15px 0; text-shadow: 2px 2px #003300;">⚠ IMPACT METRICS</h3>
+    <div class="stat"><span class="label">Temperature:</span><span class="value" id="temp">+22°C</span></div>
+    <div class="stat"><span class="label">Sunlight:</span><span class="value" id="sun">100%</span></div>
+    <div class="stat"><span class="label">Atmosphere:</span><span class="value" id="atmo">Clear</span></div>
+    <div class="stat"><span class="label">Casualties:</span><span class="value" id="dead">0%</span></div>
+    <div class="stat"><span class="label">Biomes:</span><span class="value" id="biome">Healthy</span></div>
+</div>
+
+<div id="ui">
+    <h2 id="phase-title">🦕 MINECRAFT CRETACEOUS - 66 MILLION YEARS AGO</h2>
+    <p id="phase-desc">A peaceful blocky Minecraft world thrives in the late Cretaceous period. Dense oak forests cover the landscape. Stone mountains reach toward the sky. Dinosaur mobs roam freely - T‑Rex hunts near the forest, Triceratops grazes on grass blocks, and massive Brachiosaurus feed on tree leaves. Pteranodons soar above. Temperature: 22°C. Life is abundant.</p>
+    <button onclick="beginExtinction()" id="start-btn">⚠️ INITIATE ASTEROID IMPACT</button>
+    <button onclick="location.reload()" id="restart-btn" style="display:none">↻ RESET WORLD</button>
+</div>
+
+<script>
+    let phase = 0;
+    const scene = document.querySelector('a-scene');
+    
+    function beginExtinction() {
+        document.getElementById('start-btn').style.display = 'none';
+        document.getElementById('restart-btn').style.display = 'inline-block';
+        phase1_AsteroidApproach();
+    }
+
+    function updateUI(title, desc, temp, sun, atmo, casualties, biome) {
+        document.getElementById('phase-title').textContent = title;
+        document.getElementById('phase-desc').textContent = desc;
+        document.getElementById('temp').textContent = temp;
+        document.getElementById('sun').textContent = sun;
+        document.getElementById('atmo').textContent = atmo;
+        document.getElementById('dead').textContent = casualties;
+        document.getElementById('biome').textContent = biome || 'Healthy';
+    }
+
+    // -------------------------------------------------------------------------
+    // PHASE 1 – ASTEROID ATMOSPHERIC ENTRY
+    // -------------------------------------------------------------------------
+    function phase1_AsteroidApproach() {
+        updateUI(
+            '🌠 PHASE 1: ASTEROID DETECTED - ATMOSPHERIC ENTRY',
+            "A massive 10‑15 km wide rocky asteroid (Chicxulub impactor) enters Earth's atmosphere traveling at 20 km s⁻¹ (72 000 km/h). Friction creates a super‑heated plasma sheath (~10 000 °C). The sky turns orange‑red, a deafening boom echoes, and day becomes twilight.",
+            '+28°C', '95%', 'Ionizing', '0%', 'Alarmed'
+        );
+
+        const asteroid = document.getElementById('asteroid-container');
+        asteroid.setAttribute('visible', 'true');
+        document.getElementById('trail').setAttribute('visible', 'false');
+
+        const heatAura = document.getElementById('heat-aura');
+        heatAura.setAttribute('animation', {
+            property: 'opacity',
+            to: '0.7',
+            dur: 3000
+        });
+
+        // Asteroid descends
+        document.getElementById('asteroid').setAttribute('animation', {
+            property: 'position',
+            to: '0 35 -50',
+            dur: 8000,
+            easing: 'easeInCubic'
+        });
+        document.getElementById('asteroid').setAttribute('animation__spin', {
+            property: 'rotation',
+            to: '720 360 540',
+            dur: 8000
+        });
+
+        // Sky colour change
+        document.getElementById('sky').setAttribute('animation', {
+            property: 'color',
+            to: '#ff8844',
+            dur: 8000
+        });
+
+        // Ambient light brightens
+        document.querySelector('a-light[type="ambient"]').setAttribute('animation', {
+            property: 'light.intensity',
+            to: '1.2',
+            dur: 8000
+        });
+
+        setTimeout(phase2_Impact, 8000);
+    }
+
+    // -------------------------------------------------------------------------
+    // PHASE 2 – GROUND ZERO IMPACT
+    // -------------------------------------------------------------------------
+    function phase2_Impact() {
+        updateUI(
+            '💥 PHASE 2: IMPACT - T+0 SECONDS - GROUND ZERO',
+            "The asteroid strikes the Yucatán Peninsula with the force of 100 million megatons of TNT. A 180 km crater forms in seconds, vaporising 1 000 km³ of rock. Magnitude‑11+ earthquakes, global shockwaves, and instant vaporisation within a 1 500 km radius.",
+            '+5000°C', '10%', 'Vaporized', '30%', 'Obliterated'
+        );
+
+        // Hide asteroid
+        document.getElementById('asteroid-container').setAttribute('visible', 'false');
+
+        // Show impact crater
+        const impactZone = document.getElementById('impact-zone');
+        impactZone.setAttribute('visible', 'true');
+        impactZone.setAttribute('scale', '0.1 0.1 0.1');
+        impactZone.setAttribute('animation', {
+            property: 'scale',
+            to: '1.2 1.2 1.2',
+            dur: 1500,
+            easing: 'easeOutElastic'
+        });
+
+        createCraterRim();
+        createMassiveExplosion();
+        createShockwaves();
+        throwDebris();
+        shakeCamera(35, 4000);
+
+        // Sky turns black from ejecta
+        document.getElementById('sky').setAttribute('animation', {
+            property: 'color',
+            to: '#000000',
+            dur: 2000,
+            delay: 1000
+        });
+
+        // Sunlight drops
+        document.getElementById('sun').setAttribute('animation', {
+            property: 'light.intensity',
+            to: '0.15',
+            dur: 2000,
+            delay: 1000
+        });
+
+        // Ground darkens
+        document.getElementById('ground').setAttribute('animation', {
+            property: 'color',
+            to: '#0a0a0a',
+            dur: 3000
+        });
+
+        setTimeout(phase3_Volcanism, 5000);
+    }
+
+    function createCraterRim() {
+        const rim = document.getElementById('crater-rim');
+        const rimBlocks = 16;
+        for (let i = 0; i < rimBlocks; i++) {
+            const angle = (i / rimBlocks) * Math.PI * 2;
+            const distance = 55;
+            const x = Math.cos(angle) * distance;
+            const z = Math.sin(angle) * distance;
+            const block = document.createElement('a-box');
+            block.setAttribute('width', '8');
+            block.setAttribute('height', '12');
+            block.setAttribute('depth', '8');
+            block.setAttribute('color', '#2A1A0B');
+            block.setAttribute('position', `${x} 2 ${z}`);
+            block.setAttribute('rotation', `0 ${(angle * 180 / Math.PI)} 0`);
+            rim.appendChild(block);
+        }
+    }
+
+    function createMassiveExplosion() {
+        const container = document.getElementById('explosion-particles');
+        for (let i = 0; i < 150; i++) {
+            const particle = document.createElement('a-box');
+            const angle = Math.random() * Math.PI * 2;
+            const elevation = Math.random() * Math.PI;
+            const speed = 15 + Math.random() * 40;
+            const size = Math.random() * 4 + 1;
+            particle.setAttribute('width', size);
+            particle.setAttribute('height', size);
+            particle.setAttribute('depth', size);
+            const colors = ['#ff2200', '#ff4400', '#ff6600', '#ff8800', '#ffaa00', '#ffcc00'];
+            particle.setAttribute('color', colors[Math.floor(Math.random() * colors.length)]);
+            particle.setAttribute('position', '0 0 0');
+            const x = Math.cos(angle) * Math.sin(elevation) * speed;
+            const y = Math.cos(elevation) * speed;
+            const z = Math.sin(angle) * Math.sin(elevation) * speed;
+            particle.setAttribute('animation', {
+                property: 'position',
+                to: `${x} ${y} ${z}`,
+                dur: 3500,
+                easing: 'easeOutQuad'
+            });
+            particle.setAttribute('animation__spin', {
+                property: 'rotation',
+                to: `${Math.random()*720} ${Math.random()*720} ${Math.random()*720}`,
+                dur: 3500
+            });
+            particle.setAttribute('animation__fade', {
+                property: 'opacity',
+                to: '0',
+                dur: 3500
+            });
+            container.appendChild(particle);
+        }
+
+        const flash = document.createElement('a-sphere');
+        flash.setAttribute('radius', '250');
+        flash.setAttribute('color', '#ffffff');
+        flash.setAttribute('position', '0 25 -50');
+        flash.setAttribute('opacity', '1');
+        flash.setAttribute('material', 'shader: flat');
+        flash.setAttribute('animation', {
+            property: 'opacity',
+            to: '0',
+            dur: 1000
+        });
+        scene.appendChild(flash);
+        setTimeout(() => flash.remove(), 1100);
+    }
+
+    function createShockwaves() {
+        const container = document.getElementById('shockwaves');
+        for (let i = 0; i < 12; i++) {
+            setTimeout(() => {
+                const wave = document.createElement('a-ring');
+                wave.setAttribute('radius-inner', '8');
+                wave.setAttribute('radius-outer', '14');
+                wave.setAttribute('color', i % 2 ? '#ff3300' : '#ff6600');
+                wave.setAttribute('rotation', '-90 0 0');
+                wave.setAttribute('opacity', '0.85');
+                wave.setAttribute('segments-theta', '12');
+                wave.setAttribute('animation', {
+                    property: 'scale',
+                    to: '80 80 1',
+                    dur: 5000,
+                    easing: 'easeOutQuad'
+                });
+                wave.setAttribute('animation__fade', {
+                    property: 'opacity',
+                    to: '0',
+                    dur: 5000
+                });
+                container.appendChild(wave);
+            }, i * 250);
+        }
+    }
+
+    function throwDebris() {
+        const debrisContainer = document.getElementById('debris');
+        for (let i = 0; i < 40; i++) {
+            setTimeout(() => {
+                const debris = document.createElement('a-box');
+                const size = 2 + Math.random() * 5;
+                debris.setAttribute('width', size);
+                debris.setAttribute('height', size);
+                debris.setAttribute('depth', size);
+                debris.setAttribute('color', '#3A3A3A');
+                debris.setAttribute('position', `${(Math.random()-0.5)*30} 10 ${-50 + (Math.random()-0.5)*30}`);
+                const targetY = 60 + Math.random() * 100;
+                const targetX = (Math.random()-0.5) * 200;
+                const targetZ = -100 + (Math.random()-0.5) * 150;
+                debris.setAttribute('animation', {
+                    property: 'position',
+                    to: `${targetX} ${targetY} ${targetZ}`,
+                    dur: 4000 + Math.random() * 3000,
+                    easing: 'easeOutQuad'
+                });
+                debris.setAttribute('animation__spin', {
+                    property: 'rotation',
+                    to: `${Math.random()*1080} ${Math.random()*1080} ${Math.random()*1080}`,
+                    dur: 4000 + Math.random() * 3000
+                });
+                debrisContainer.appendChild(debris);
+            }, i * 100);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // PHASE 3 – GLOBAL VOLCANISM
+    // -------------------------------------------------------------------------
+    function phase3_Volcanism() {
+        updateUI(
+            '🌋 PHASE 3: GLOBAL VOLCANISM - T+HOURS TO DAYS',
+            "Seismic shockwaves trigger worldwide eruptions. Deccan Traps spew billions of tons of SO₂, CO₂ and ash. The sky turns blood‑red, pyroclastic flows incinerate everything, and acid rain begins.",
+            '+200°C', '15%', 'Volcanic', '50%', 'Burning'
+        );
+
+        ['volc-light1', 'volc-light2'].forEach((id, i) => {
+            setTimeout(() => {
+                document.getElementById(id).setAttribute('animation', {
+                    property: 'light.intensity',
+                    to: '5',
+                    dur: 2000
+                });
+                document.getElementById('lava' + (i+1)).setAttribute('visible', 'true');
+                document.getElementById('lava' + (i+1)).setAttribute('animation', {
+                    property: 'opacity',
+                    from: '0',
+                    to: '0.95',
+                    dur: 2000
+                });
+                createLavaFlow(i + 1);
+                createVolcanicAshPlume(i + 1);
+            }, i * 1500);
+        });
+
+        // Sky dark red
+        document.getElementById('sky').setAttribute('animation', {
+            property: 'color',
+            to: '#4a0a0a',
+            dur: 4000
+        });
+
+        setTimeout(phase4_Firestorm, 7000);
+    }
+
+    function createLavaFlow(volcanoNum) {
+        const positions = [
+            { x: 90, z: -150 },
+            { x: -110, z: -130 }
+        ];
+        const pos = positions[volcanoNum - 1];
+        for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+                const lava = document.createElement('a-box');
+                lava.setAttribute('width', '8');
+                lava.setAttribute('height', '3');
+                lava.setAttribute('depth', '8');
+                lava.setAttribute('color', i < 3 ? '#ff3300' : '#ff4400');
+                lava.setAttribute('position', `${pos.x + (Math.random()-0.5)*15} ${72 - i * 7} ${pos.z + i * 6}`);
+                lava.setAttribute('opacity', '0.95');
+                lava.setAttribute('animation', {
+                    property: 'opacity',
+                    from: '0',
+                    to: '0.95',
+                    dur: 500
+                });
+                const light = document.createElement('a-light');
+                light.setAttribute('type', 'point');
+                light.setAttribute('color', '#ff3300');
+                light.setAttribute('intensity', '2.5');
+                light.setAttribute('distance', '30');
+                lava.appendChild(light);
+                scene.appendChild(lava);
+                setTimeout(() => {
+                    lava.setAttribute('animation', {
+                        property: 'color',
+                        to: '#1a0a0a',
+                        dur: 6000
+                    });
+                }, 8000);
+            }, i * 900);
+        }
+    }
+
+    function createVolcanicAshPlume(volcanoNum) {
+        const positions = [
+            { x: 90, z: -150 },
+            { x: -110, z: -130 }
+        ];
+        const pos = positions[volcanoNum - 1];
+        const plume = document.createElement('a-entity');
+        plume.setAttribute('particle-system', {
+            preset: 'dust',
+            color: '#0a0a0a,#1a0a0a,#2a1a1a',
+            particleCount: 2000,
+            size: 4,
+            maxAge: 10,
+            velocityValue: `0 ${18 + volcanoNum * 3} 0`,
+            velocitySpread: '12 3 12',
+            accelerationValue: '0 -0.3 0'
+        });
+        plume.setAttribute('position', `${pos.x} 82 ${pos.z}`);
+        scene.appendChild(plume);
+    }
+
+    // -------------------------------------------------------------------------
+    // PHASE 4 – GLOBAL FIRESTORM
+    // -------------------------------------------------------------------------
+    function phase4_Firestorm() {
+        updateUI(
+            '🔥 PHASE 4: GLOBAL FIRESTORM - T+24 HOURS',
+            "Ejected debris re‑enters, raining super‑heated fragments worldwide. Temperatures soar to 500 °C, forests ignite, fire tornadoes form, and smoke chokes the atmosphere.",
+            '+500°C', '5%', 'Inferno', '65%', 'Incinerated'
+        );
+
+        // Sky orange‑red
+        document.getElementById('sky').setAttribute('animation', {
+            property: 'color',
+            to: '#ff4400',
+            dur: 3000
+        });
+
+        const firePositions = [
+            { x: 15, z: -20 }, { x: -25, z: -30 }, { x: 30, z: -40 },
+            { x: -40, z: -25 }, { x: 20, z: -35 }, { x: -15, z: -20 },
+            { x: 35, z: -28 }, { x: -30, z: -45 }, { x: 10, z: -30 },
+            { x: -20, z: -35 }, { x: 25, z: -25 }, { x: -35, z: -30 },
+            { x: 5, z: -35 }, { x: -10, z: -45 }, { x: 40, z: -22 }
+        ];
+        firePositions.forEach((pos, i) => {
+            setTimeout(() => {
+                createMinecraftFire(pos.x, pos.z);
+            }, i * 350);
+        });
+
+        // Fade out forest, dinosaurs, mountains
+        document.getElementById('forest').setAttribute('animation', {
+            property: 'opacity',
+            to: '0',
+            dur: 6000
+        });
+        document.getElementById('dinosaurs').setAttribute('animation', {
+            property: 'opacity',
+            to: '0',
+            dur: 5000
+        });
+        document.getElementById('mountains').setAttribute('animation', {
+            property: 'opacity',
+            to: '0.3',
+            dur: 5000
+        });
+
+        setTimeout(phase5_ImpactWinter, 9000);
+    }
+
+    function createMinecraftFire(x, z) {
+        const fire = document.createElement('a-entity');
+        fire.setAttribute('position', `${x} 0 ${z}`);
+
+        // Layered flames
+        for (let i = 0; i < 4; i++) {
+            const flame = document.createElement('a-box');
+            flame.setAttribute('width', 2.5 - i * 0.4);
+            flame.setAttribute('height', 5 - i * 0.6);
+            flame.setAttribute('depth', 2.5 - i * 0.4);
+            const colors = ['#ff2200', '#ff4400', '#ff6600', '#ff9900'];
+            flame.setAttribute('color', colors[i]);
+            flame.setAttribute('opacity', 0.85 - i * 0.1);
+            flame.setAttribute('position', `${(Math.random()-0.5)*0.6} ${2.5 + i * 0.8} ${(Math.random()-0.5)*0.6}`);
+            flame.setAttribute('animation', {
+                property: 'position.y',
+                from: 2.5 + i * 0.8,
+                to: 4.5 + i * 0.8,
+                dur: 1200 - i * 200,
+                dir: 'alternate',
+                loop: true,
+                easing: 'easeInOutSine'
+            });
+            flame.setAttribute('animation__scale', {
+                property: 'scale.y',
+                from: '1',
+                to: '1.5',
+                dur: 900 - i * 150,
+                dir: 'alternate',
+                loop: true
+            });
+            fire.appendChild(flame);
+        }
+
+        // Smoke
+        const smoke = document.createElement('a-entity');
+        smoke.setAttribute('particle-system', {
+            preset: 'dust',
+            color: '#0a0a0a,#1a1a1a,#2a2a2a',
+            particleCount: 250,
+            size: 5,
+            maxAge: 6,
+            velocityValue: '0 8 0',
+            velocitySpread: '3 2 3',
+            accelerationValue: '0 0.5 0'
+        });
+        smoke.setAttribute('position', '0 7 0');
+        fire.appendChild(smoke);
+
+        // Light
+        const light = document.createElement('a-light');
+        light.setAttribute('type', 'point');
+        light.setAttribute('color', '#ff5500');
+        light.setAttribute('intensity', '3');
+        light.setAttribute('distance', '25');
+        light.setAttribute('position', '0 5 0');
+        light.setAttribute('animation', {
+            property: 'light.intensity',
+            from: '3',
+            to: '4',
+            dur: 600,
+            dir: 'alternate',
+            loop: true
+        });
+        fire.appendChild(light);
+
+        document.getElementById('fires').appendChild(fire);
+    }
+
+    // -------------------------------------------------------------------------
+    // PHASE 5 – IMPACT WINTER
+    // -------------------------------------------------------------------------
+    function phase5_ImpactWinter() {
+        updateUI(
+            '❄️ PHASE 5: IMPACT WINTER - T+WEEKS TO MONTHS',
+            "Soot and sulfate aerosols block 99 % of sunlight. Temperatures plunge, photosynthesis stops, and the food chain collapses.",
+            '-15°C', '1%', 'Ash Cloud', '75%', 'Frozen'
+        );
+
+        // Dark sky
+        document.getElementById('sky').setAttribute('animation', {
+            property: 'color',
+            to: '#050505',
+            dur: 5000
+        });
+
+        // Sun dim
+        document.getElementById('sun').setAttribute('animation', {
+            property: 'light.intensity',
+            to: '0.02',
+            dur: 5000
+        });
+
+        // Ash fall
+        document.getElementById('ash-particle-system').setAttribute('visible', 'true');
+
+        // Fires die out
+        document.getElementById('fires').setAttribute('animation', {
+            property: 'opacity',
+            to: '0',
+            dur: 4000
+        });
+
+        // Crater lava cools
+        document.getElementById('melt-pool').setAttribute('animation', {
+            property: 'color',
+            to: '#0a0000',
+            dur: 7000
+        });
+        document.getElementById('melt-pool').setAttribute('animation__dim', {
+            property: 'opacity',
+            to: '0.3',
+            dur: 7000
+        });
+
+        // Volcanic lights dim
+        ['volc-light1', 'volc-light2'].forEach(id => {
+            document.getElementById(id).setAttribute('animation', {
+                property: 'light.intensity',
+                to: '0.5',
+                dur: 5000
+            });
+        });
+
+        setTimeout(phase6_Aftermath, 11000);
+    }
+
+    // -------------------------------------------------------------------------
+    // PHASE 6 – MASS EXTINCTION AFTERMATH
+    // -------------------------------------------------------------------------
+    function phase6_Aftermath() {
+        updateUI(
+            '💀 PHASE 6: MASS EXTINCTION COMPLETE - T+YEARS',
+            "75 % of species vanish, including all non‑avian dinosaurs. Small mammals, birds, crocodiles, turtles and insects survive. Ferns are the first plants to re‑appear, paving the way for mammals.",
+            '-8°C', '20%', 'Clearing', '75%', 'Recovering'
+        );
+
+        // Sky slowly clears
+        document.getElementById('sky').setAttribute('animation', {
+            property: 'color',
+            to: '#1a1a2a',
+            dur: 8000
+        });
+        document.getElementById('sun').setAttribute('animation', {
+            property: 'light.intensity',
+            to: '0.5',
+            dur: 8000
+        });
+
+        // Ash fades
+        setTimeout(() => {
+            document.getElementById('ash-particle-system').setAttribute('visible', 'false');
+        }, 3000);
+
+        // Add survivors
+        createSurvivors();
+
+        // Show extinction stats
+        setTimeout(() => create3DText('75% OF ALL SPECIES EXTINCT', 0, 12, -40, '#ff0000'), 2000);
+        setTimeout(() => create3DText('ALL NON‑AVIAN DINOSAURS DEAD', 0, 10, -40, '#ff6600'), 4000);
+        setTimeout(() => create3DText('ONLY SMALL ANIMALS SURVIVE', 0, 8, -40, '#ffaa00'), 6000);
+        setTimeout(() => create3DText('MAMMALS INHERIT THE EARTH', 0, 6, -40, '#00ff88'), 8000);
+
+        // Ground turns green again (ferns)
+        setTimeout(() => {
+            document.getElementById('ground').setAttribute('animation', {
+                property: 'color',
+                to: '#2a3a2a',
+                dur: 10000
+            });
+        }, 10000);
+    }
+
+    function createSurvivors() {
+        // Small mammal
+        const mammal = document.createElement('a-entity');
+        mammal.setAttribute('position', '8 0.5 -15');
+        const body = document.createElement('a-box');
+        body.setAttribute('width', '1.2');
+        body.setAttribute('height', '0.8');
+        body.setAttribute('depth', '1.8');
+        body.setAttribute('color', '#5d4c3d');
+        mammal.appendChild(body);
+        const head = document.createElement('a-box');
+        head.setAttribute('width', '0.7');
+        head.setAttribute('height', '0.7');
+        head.setAttribute('depth', '0.7');
+        head.setAttribute('position', '1 0 0');
+        head.setAttribute('color', '#6d5c4d');
+        mammal.appendChild(head);
+        const tail = document.createElement('a-box');
+        tail.setAttribute('width', '0.3');
+        tail.setAttribute('height', '0.3');
+        tail.setAttribute('depth', '1');
+        tail.setAttribute('position', '-1 0 0');
+        tail.setAttribute('color', '#5d4c3d');
+        mammal.appendChild(tail);
+        mammal.setAttribute('animation', {
+            property: 'position',
+            from: '8 0.5 -15',
+            to: '14 0.5 -20',
+            dur: 6000,
+            loop: true,
+            dir: 'alternate',
+            easing: 'easeInOutSine'
+        });
+        scene.appendChild(mammal);
+
+        // Early bird
+        const bird = document.createElement('a-entity');
+        bird.setAttribute('position', '-10 4 -20');
+        const birdBody = document.createElement('a-box');
+        birdBody.setAttribute('width', '0.9');
+        birdBody.setAttribute('height', '1');
+        birdBody.setAttribute('depth', '1.2');
+        birdBody.setAttribute('color', '#2a2a2a');
+        bird.appendChild(birdBody);
+        const birdHead = document.createElement('a-box');
+        birdHead.setAttribute('width', '0.6');
+        birdHead.setAttribute('height', '0.6');
+        birdHead.setAttribute('depth', '0.6');
+        birdHead.setAttribute('position', '0 0.6 0.6');
+        birdHead.setAttribute('color', '#1a1a1a');
+        bird.appendChild(birdHead);
+        const wing1 = document.createElement('a-box');
+        wing1.setAttribute('width', '1.8');
+        wing1.setAttribute('height', '0.2');
+        wing1.setAttribute('depth', '0.6');
+        wing1.setAttribute('color', '#1a1a1a');
+        wing1.setAttribute('position', '1.2 0 0');
+        wing1.setAttribute('animation', {
+            property: 'rotation',
+            from: '0 0 -45',
+            to: '0 0 45',
+            dur: 400,
+            loop: true,
+            dir: 'alternate'
+        });
+        bird.appendChild(wing1);
+        const wing2 = document.createElement('a-box');
+        wing2.setAttribute('width', '1.8');
+        wing2.setAttribute('height', '0.2');
+        wing2.setAttribute('depth', '0.6');
+        wing2.setAttribute('color', '#1a1a1a');
+        wing2.setAttribute('position', '-1.2 0 0');
+        wing2.setAttribute('animation', {
+            property: 'rotation',
+            from: '0 0 45',
+            to: '0 0 -45',
+            dur: 400,
+            loop: true,
+            dir: 'alternate'
+        });
+        bird.appendChild(wing2);
+        bird.setAttribute('animation__fly', {
+            property: 'position',
+            from: '-10 4 -20',
+            to: '-5 7 -28',
+            dur: 7000,
+            loop: true,
+            dir: 'alternate',
+            easing: 'easeInOutSine'
+        });
+        scene.appendChild(bird);
+
+        // Small crocodile
+        const croc = document.createElement('a-entity');
+        croc.setAttribute('position', '-6 0.3 -18');
+        const crocBody = document.createElement('a-box');
+        crocBody.setAttribute('width', '1');
+        crocBody.setAttribute('height', '0.6');
+        crocBody.setAttribute('depth', '2.5');
+        crocBody.setAttribute('color', '#3a4a3a');
+        croc.appendChild(crocBody);
+        const crocHead = document.createElement('a-box');
+        crocHead.setAttribute('width', '0.8');
+        crocHead.setAttribute('height', '0.5');
+        crocHead.setAttribute('depth', '1.2');
+        crocHead.setAttribute('position', '0 0 1.8');
+        crocHead.setAttribute('color', '#2a3a2a');
+        croc.appendChild(crocHead);
+        const crocTail = document.createElement('a-box');
+        crocTail.setAttribute('width', '0.6');
+        crocTail.setAttribute('height', '0.4');
+        crocTail.setAttribute('depth', '2');
+        crocTail.setAttribute('position', '0 0 -2.2');
+        crocTail.setAttribute('color', '#3a4a3a');
+        croc.appendChild(crocTail);
+        croc.setAttribute('animation', {
+            property: 'position',
+            from: '-6 0.3 -18',
+            to: '-2 0.3 -22',
+            dur: 8000,
+            loop: true,
+            dir: 'alternate',
+            easing: 'linear'
+        });
+        scene.appendChild(croc);
+
+        // Fern sprouts (first new growth)
+        setTimeout(() => {
+            for (let i = 0; i < 8; i++) {
+                const fern = document.createElement('a-box');
+                fern.setAttribute('width', '0.5');
+                fern.setAttribute('height', '1.2');
+                fern.setAttribute('depth', '0.5');
+                fern.setAttribute('color', '#2a5a2a');
+                const x = -10 + Math.random() * 20;
+                const z = -25 + Math.random() * 10;
+                fern.setAttribute('position', `${x} 0 ${z}`);
+                fern.setAttribute('opacity', '0');
+                fern.setAttribute('animation', {
+                    property: 'opacity',
+                    from: '0',
+                    to: '0.7',
+                    dur: 3000,
+                    delay: i * 400
+                });
+                fern.setAttribute('animation__grow', {
+                    property: 'scale',
+                    from: '0.1 0.1 0.1',
+                    to: '1 1 1',
+                    dur: 3000,
+                    delay: i * 400
+                });
+                scene.appendChild(fern);
+            }
+        }, 5000);
+    }
+
+    function create3DText(text, x, y, z, color) {
+        const txt = document.createElement('a-text');
+        txt.setAttribute('value', text);
+        txt.setAttribute('position', `${x} ${y} ${z}`);
+        txt.setAttribute('align', 'center');
+        txt.setAttribute('color', color);
+        txt.setAttribute('width', '22');
+        txt.setAttribute('opacity', '0');
+        txt.setAttribute('font', 'mozillavr');
+        txt.setAttribute('animation', {
+            property: 'opacity',
+            to: '1',
+            dur: 2000
+        });
+        txt.setAttribute('animation__float', {
+            property: 'position.y',
+            from: y,
+            to: y + 1,
+            dur: 4000,
+            dir: 'alternate',
+            loop: true,
+            easing: 'easeInOutSine'
+        });
+        scene.appendChild(txt);
+    }
+
+    function shakeCamera(intensity, duration) {
+        const rig = document.getElementById('rig');
+        const original = rig.getAttribute('position');
+        let elapsed = 0;
+        const interval = 50;
+        const shake = setInterval(() => {
+            if (elapsed >= duration) {
+                clearInterval(shake);
+                rig.setAttribute('position', original);
+                return;
+            }
+            const factor = 1 - (elapsed / duration);
+            const amount = intensity * factor * 0.01;
+            rig.setAttribute('position', {
+                x: original.x + (Math.random() - 0.5) * amount,
+                y: original.y + (Math.random() - 0.5) * amount,
+                z: original.z + (Math.random() - 0.5) * amount
+            });
+            elapsed += interval;
+        }, interval);
+    }
+
+    // Keyboard shortcut – space starts the event
+    document.addEventListener('keydown', (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
+            if (phase === 0) beginExtinction();
+        }
+    });
+
+    // Console messages
+    console.log('%c🟩 MINECRAFT K‑T EXTINCTION VR READY', 'color:#00ff00; font-size:20px; font-weight:bold; text-shadow: 2px 2px #003300');
+    console.log('%c⚠️  Press "INITIATE ASTEROID IMPACT" or SPACE to begin the extinction event', 'color:#ffaa00; font-size:14px');
+    console.log('%c🦕 Witness the most catastrophic event in Earth\'s history – in Minecraft blocks!', 'color:#00ff88; font-size:12px');
+</script>
+</body>
+</html>

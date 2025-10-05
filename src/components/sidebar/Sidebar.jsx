@@ -85,7 +85,7 @@ const Sidebar = () => {
               className="recent-entry"
               onClick={() => handleCardClick("ASTRO PLANNER")}
             >
-              <p>IMPACT SIMULATOR</p>
+              <p>Impact Simulator</p>
             </div>
             <div
               className="recent-entry"

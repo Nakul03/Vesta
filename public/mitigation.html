@@ -438,6 +438,7 @@
                     <div class="end-buttons">
                         <button class="btn btn-success" onclick="nextLevel()">NEXT LEVEL</button>
                         <button class="btn btn-secondary" onclick="showMenu()">MAIN MENU</button>
+                        <button class="btn btn-secondary" onclick="shareScore('success')">SHARE SCORE</button>
                     </div>
                 </div>
             </div>
@@ -451,12 +452,16 @@
                     <h2 class="end-title">EARTH DESTROYED</h2>
                     <div class="end-score" id="failureScore">0 POINTS</div>
                     <p class="end-stats" id="failureLevel">You reached Level 1</p>
-                    <button class="btn btn-danger" onclick="startGame()">TRY AGAIN</button>
+                    <div class="end-buttons">
+                        <button class="btn btn-danger" onclick="startGame()">TRY AGAIN</button>
+                        <button class="btn btn-secondary" onclick="shareScore('failure')">SHARE SCORE</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // Game State
         let gameState = {
@@ -491,6 +496,28 @@
             canvas.addEventListener('click', handleCanvasClick);
             canvas.addEventListener('mousemove', handleCanvasMove);
         };
+
+        function shareScore(screenType) {
+            const screenElement = document.getElementById(screenType + 'Screen');
+            const cardElement = screenElement.querySelector('.end-card');
+
+            html2canvas(cardElement).then(canvas => {
+                canvas.toBlob(blob => {
+                    const file = new File([blob], 'achievement.png', { type: 'image/png' });
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'Asteroid Defense Command Achievement',
+                            text: `I scored ${gameState.score} points in Asteroid Defense Command!`,
+                            files: [file],
+                        })
+                        .then(() => console.log('Successful share'))
+                        .catch((error) => console.log('Error sharing', error));
+                    } else {
+                        alert('Sharing not supported on this browser.');
+                    }
+                }, 'image/png');
+            });
+        }
 
         function showScreen(screenName) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));

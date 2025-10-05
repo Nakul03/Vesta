@@ -79,43 +79,43 @@ const Sidebar = () => {
               className="recent-entry"
               onClick={() => handleCardClick("ASTRO GAME")}
             >
-              <p>ASTRO GAME</p>
+              <p>Quiz Section</p>
             </div>
             <div
               className="recent-entry"
               onClick={() => handleCardClick("ASTRO PLANNER")}
             >
-              <p>ASTEROID IMPACT SIMULATOR</p>
+              <p>IMPACT SIMULATOR</p>
             </div>
             <div
               className="recent-entry"
               onClick={() => handleCardClick("User Progress")}
             >
-              <p>CHAT</p>
+              <p>Chat Bot</p>
             </div>
             <div
               className="recent-entry"
               onClick={() => handleCardClick("mine")}
             >
-              <p>Simulation</p>
+              <p>VR Simulation</p>
             </div>
             <div
               className="recent-entry"
               onClick={() => handleCardClick("Create a Study Plan")}
             >
-              <p>Trajectory</p>
+              <p>RealTime Trajectory</p>
             </div>
             <div
               className="recent-entry"
               onClick={() => handleCardClick("Audio Summary")}
             >
-              <p>Mitigation Game</p>
+              <p>Mitigation Strategy</p>
             </div>
           </div>
         )}
 
         {/* Documents */}
-        {extended && <p className="recent-title">Chats</p>}
+        {extended && <p className="recent-title"></p>}
         {extended &&
           documents.map((doc) => (
             <div

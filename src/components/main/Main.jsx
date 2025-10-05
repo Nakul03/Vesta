@@ -52,9 +52,7 @@ const Main = () => {
                 <div
                   key={index}
                   className="asteroid-card"
-                  onClick={() =>
-                    navigate(`/asteroids/${card.type.replace(/\s+/g, "-").toLowerCase()}`)
-                  }
+                  
                 >
                   <h3 className="asteroid-title">{card.type}</h3>
                   <img src={card.image} alt={card.type} className="asteroid-img" />
